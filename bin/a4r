@@ -3,11 +3,6 @@
 
 require 'rubygems'
 require 'aozora4reader'
-require 'optparse'
-
-EBB      = 'ebb'
-PLATEX   = 'platex -interaction=nonstopmode'
-DVIPDFMX = 'dvipdfmx'
 
 def error_and_exit(msg)
   STDERR.puts msg
@@ -17,14 +12,6 @@ end
 def usage()
     error_and_exit "usage: a4r <srcfile>"
 end
-
-opt = OptionParser.new
-make_pdf = nil
-opt.on('-a', '--all', 'generate PDF') do
-  make_pdf = true
-end
-
-opt.parse!(ARGV)
 
 if ARGV.size != 1
    usage
@@ -36,11 +23,3 @@ if !File.exists? file
 end
 
 Aozora4Reader.a4r(file)
-
-if make_pdf
-  system("#{EBB} *.png")
-  system("#{PLATEX} #{file.gsub(/.txt$/,'.tex')}")
-  system("#{DVIPDFMX} #{file.gsub(/.txt$/,'.dvi')}")
-end
-
-
