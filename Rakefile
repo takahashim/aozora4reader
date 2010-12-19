@@ -5,13 +5,14 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "aozora4reader"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{Aozora Bunko parser for Sony Reader}
+    gem.description = %Q{Aozora Bunko parser for Sony Reader}
     gem.email = "maki@rubycolor.org"
     gem.homepage = "http://github.com/takahashim/aozora4reader"
     gem.authors = ["takahashim"]
-    gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
+#    gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+    gem.files.include << "data/gaiji.txt"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

@@ -1,6 +1,46 @@
 = aozora4reader
 
-Description goes here.
+aozora4reader is a tool to parse and convert documents in Aozora Bunko (http://www.aozora.gr.jp/).
+
+aozora4readerは青空文庫に蓄積された書籍を解析し、ソニーリーダー用のPDFを生成するためのツールです。
+現状はPRS-650 Touch Editionをターゲットとしています。
+また、PDFの生成にはLaTeXを利用しています。
+
+
+== Usage
+
+You can use a4r command to convert into LaTeX file.
+
+  $ a4r <aozora bunko file>
+
+  ex. a4r kokoro.txt
+
+You also can use -a option to generate PDF file.
+
+  ex. a4r -a kokoro.txt
+
+When using -a option, you need LaTeX environment and dvipdfmx.
+
+
+== Sources
+
+You can get source codes in GitHub.
+
+http://github.com/takahashim/aozora4reader
+
+
+== Special Thanks
+
+aozora4readerのコアの部分と、LaTeX用スタイルシートは、齋藤修三郎さんが作成した青空文庫パッケージが元になっています。
+
+  「青空文庫を読もう！」 http://psitau.kitunebi.com/aozora.html
+
+また、そもそも開発の発端は、高山恭介さんが公開されている「青空キンドル」を参考にソニーリーダーに対応させたい、というものでした。高山さんが公開されているaz2tex.rb、kindleaozora.styも参考にしています。
+
+　「青空キンドル [Beta]」 http://a2k.aill.org/
+
+この場を借りて斉藤さん、高山さんに御礼申し上げます。
+
 
 == Note on Patches/Pull Requests
  
@@ -12,6 +52,9 @@ Description goes here.
   (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
-== Copyright
+== Author
 
-Copyright (c) 2010 takahashim. See LICENSE for details.
+Masayoshi Takahashi (@takahashim)
+  The core library and LaTeX style file are based on psitau's "aozora bunko package".
+
+See LICENSE for details.
