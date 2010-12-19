@@ -72,6 +72,16 @@ class Aozora4Reader
 \\def\\rubykatuji{\\rubyfamily\\tiny}
 %\\def\\rubykatuji{\\tiny}%for UTF package
 %\\renewenvironment{teihon}{\\comment}{\\endcomment}
+\\usepackage[dvipdfm,bookmarks=true,bookmarksnumbered=true,%
+            pdftitle={#{@title}},%
+            pdfauthor={#{@author}}]{hyperref}
+%% Bookmarkの文字化け対策（日本語向け）
+\\ifnum 46273=\\euc"B4C1 % 46273 == 0xB4C1 == 漢(EUC-JP)
+  \\AtBeginDvi{\\special{pdf:tounicode EUC-UCS2}}%
+\\else
+  \\AtBeginDvi{\\special{pdf:tounicode 90ms-RKSJ-UCS2}}%
+\\fi
+
 END_OF_PRE
 
     str
@@ -273,9 +283,6 @@ END_OF_POST
     outputfile = File.open(outputfile_name, "w")
 
     # プリアンブルの処理
-
-    outputfile.write(preamble())
-
     empty_line = 0
     in_note = false
     meta_data = []
@@ -303,23 +310,37 @@ END_OF_POST
     end
 
     @line_num +=  meta_data.size
-    outputfile.print "\\title{"+normalize(meta_data.shift)+"}\n"
+    @title = normalize(meta_data.shift)
     case meta_data.size
     when 1
-      outputfile.print "\\author{"+normalize(meta_data.shift)+"}\n"
+      @author = normalize(meta_data.shift)
     when 2
-      outputfile.print "\\subtitle{"+normalize(meta_data.shift)+"}\n"
-      outputfile.print "\\author{"+normalize(meta_data.shift)+"}\n"
+      @subtitle = normalize(meta_data.shift)
+      @author = normalize(meta_data.shift)
     when 3
-      outputfile.print "\\subtitle{"+normalize(meta_data.shift)+"}\n"
-      outputfile.print "\\author{"+normalize(meta_data.shift)+"}\n"
-      outputfile.print "\\subauthor{"+normalize(meta_data.shift)+"}\n"
+      @subtitle = normalize(meta_data.shift)
+      @author = normalize(meta_data.shift)
+      @subauthor = normalize(meta_data.shift)
     else
-      outputfile.print "\\subtitle{"+normalize(meta_data.shift)+"}\n"
-      outputfile.print "\\author{"+normalize(meta_data.shift)+"}\n"
-      outputfile.print "\\subauthor{"+normalize(meta_data.shift)+"}\n"
+      @subtitle = normalize(meta_data.shift)
+      @author = normalize(meta_data.shift)
+      @subauthor = normalize(meta_data.shift)
+      @meta_data = []
       until meta_data.empty?
-        outputfile.print "\\metadata{"+normalize(meta_data.shift)+"}\n"
+        @metadata << normalize(meta_data.shift)
+      end
+    end
+
+    outputfile.write(preamble())
+
+    outputfile.print "\\title{"+@title+"}\n"
+    outputfile.print "\\subtitle{"+@subtitle+"}\n" if @subtitle
+    outputfile.print "\\author{"+@author+"}\n"
+    outputfile.print "\\subauthor{"+@subauthor+"}\n" if @subauthor
+
+    if @meta_data
+      @meta_data.each do |data|
+        outputfile.print "\\metadata{"+data+"}\n"
       end
     end
     outputfile.print "\\date{}\n"
