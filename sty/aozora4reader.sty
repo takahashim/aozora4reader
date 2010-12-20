@@ -1,0 +1,470 @@
+\NeedsTeXFormat{pLaTeX2e}
+\ProvidesPackage{aozora4reader}[2009/02/05 v0.5 takayama, 2010/12/18 v0.1 takahashim]
+\RequirePackage{verbatim}
+\RequirePackage{keyval}
+%
+%スタイルオプション
+%
+\newif\if@waku \@wakutrue
+\def\aozora@title@style{plain}
+\def\aozora@dviware{dvipdfm}
+\def\kindle@type{kindle2}
+\def\base@size{normal}
+\define@key{aozora}{title}[plain]{\def\aozora@title@style{#1}}
+\define@key{aozora}{device}[kindle2]{\def\kindle@type{#1}}
+\define@key{aozora}{size}[normal]{\def\base@size{#1}}
+\define@key{aozora}{dviware}[dvipdfm]{\def\aozora@dviware{#1}}
+\define@key{aozora}{final}[true]{\let\footnote\@gobble}
+\define@key{aozora}{draft}[false]{\relax}
+\define@key{aozora}{nowaku}[false]{\@wakufalse}
+\def\ProcessOptionsWithKV#1{%
+	\let\@tempc\relax%
+	\let\aozora@tempa\@empty
+	\@for\CurrentOption:=\@classoptionslist\do{%
+		\@ifundefined{KV@#1@\CurrentOption}%
+		{}%
+		{\edef\aozora@tempa{\aozora@tempa,\CurrentOption,}}%
+	}%
+	\edef\aozora@tempa{%
+		\noexpand\setkeys{#1}{%
+			\aozora@tempa\@ptionlist{\@currname.\@currext}%
+		}%
+	}%
+	\aozora@tempa
+}
+\ProcessOptionsWithKV{aozora}
+\AtEndOfPackage{%
+	\let\@unprocessedoptions\relax
+}
+%graphic packageの読み込み
+\RequirePackage[\aozora@dviware]{graphicx}
+%新しい単位の設定
+\newlength{\JQ}
+\setlength{\JQ}{0.259817mm}
+%
+%用紙サイズおよび文字サイズの設定
+%
+\def\device@a{kindle2}
+\def\device@b{kindledx}
+\def\size@a{normal}
+\def\size@b{small}
+\def\size@c{large}
+\newdimen\nmls
+\newdimen\nmlbs
+\newdimen\smls
+\newdimen\smlbs
+\newdimen\ftns
+\newdimen\ftnbs
+\newdimen\scrs
+\newdimen\scrbs
+\newdimen\hugs
+\newdimen\hugbs
+\newdimen\huges
+\newdimen\hugebs
+\newcount\nmlqn
+\newcount\jisuu
+\newcount\gyousuu
+%文字サイズの決定
+\ifx\base@size\size@a
+	%通常の大きさの定義
+	\nmlqn=13   %\normalsizeの級数
+	\nmlbs=22H  %\normalsizeの行送り
+	\smls =11\JQ%\smallの大きさ
+	\smlbs=18H  %\smallの行送り
+	\ftns =10\JQ%\footnotesizeの大きさ
+	\ftnbs=15H  %\footnotesizeの行送り
+	\scrs = 9\JQ%\scriptsizeの級数
+	\scrbs=12H  %\scriptsizeの行送り
+\else
+	\ifx\base@size\size@b
+		%小さい場合の定義
+		\nmlqn=11   %\normalsizeの級数
+		\nmlbs=19H  %\normalsizeの行送り
+		\smls =10\JQ%\smallの大きさ
+		\smlbs=18H  %\smallの行送り
+		\ftns = 9\JQ%\footnotesizeの大きさ
+		\ftnbs=15H  %\footnotesizeの行送り
+		\scrs = 8\JQ%\scriptsizeの級数
+		\scrbs=12H  %\scriptsizeの行送り
+	\else
+		\ifx\base@size\size@c
+			%大きい場合の定義
+			\nmlqn=15   %\normalsizeの級数
+%%			\nmlqn=14   %\normalsizeの級数
+%%			\nmlbs=26H  %\normalsizeの行送り ←これだとルビやfootnoteが入ったときに厳しいっぽい
+			\nmlbs=25H  %\normalsizeの行送り
+			\smls =12\JQ%\smallの大きさ
+			\smlbs=21H  %\smallの行送り
+			\ftns =11\JQ%\footnotesizeの大きさ
+			\ftnbs=16H  %\footnotesizeの行送り
+			\scrs =10\JQ%\scriptsizeの級数
+			\scrbs=14H  %\scriptsizeの行送り
+		\else
+			\PackageError{aozorakindle}{Unkown letter size.}{Choose 'normal' or 'small' or 'large'.}
+		\fi
+	\fi
+\fi
+\nmls =\nmlqn\JQ%normalsizeの級数
+\hugs =25\JQ%\hugeの大きさ
+\hugbs=40H %\hugeの行送り
+\huges=\smls
+\multiply\huges by 3 %\Hugeは\smallの3倍
+\hugebs=\smlbs
+\multiply\hugebs by 3 %\Hugeの行送り
+%用紙サイズの決定
+\ifx\kindle@type\device@a
+	%Kindle 2用の設定
+	%%\setlength\paperwidth{340H}
+        \setlength\paperwidth{350H}
+	%%\setlength\paperheight{453H}
+	\setlength\paperheight{466H}
+	\ifx\base@size\size@a
+		%通常の大きさの場合
+		\jisuu=31 \gyousuu=15
+	\else
+		\ifx\base@size\size@b
+			%小さい場合の場合
+			\jisuu=37 \gyousuu=17
+		\else
+			\ifx\base@size\size@c
+				%大きい場合の場合
+%%				\jisuu=27 \gyousuu=13
+				\jisuu=28 \gyousuu=13
+			\else
+				\PackageError{aozorakindle}{Unkown letter size.}{Choose 'normal' or 'small' or 'large'.}
+			\fi
+		\fi
+	\fi
+\else
+	\ifx\kindle@type\device@b
+		%Kindle DX用の設定
+		\setlength\paperwidth{530H}
+		\setlength\paperheight{771H}
+		\@twocolumntrue
+		\ifx\base@size\size@a
+			%通常の大きさの場合
+			\jisuu=55 \gyousuu=23
+		\else
+			\ifx\base@size\size@b
+				%小さい場合の場合
+				\jisuu=65 \gyousuu=26
+			\else
+				\ifx\base@size\size@c
+					%大きい場合の場合
+					\jisuu=48 \gyousuu=20
+				\else
+					\PackageError{aozorakindle}{Unkown letter size.}{Choose 'normal' or 'small' or 'large'.}
+				\fi
+			\fi
+		\fi
+	\else
+		\PackageError{aozorakindle}{Unkown device.}{Choose 'kindle2' or 'kindledx'.}
+	\fi
+\fi
+%
+%文字サイズの定義
+%
+\renewcommand{\normalsize}{%
+	\@setfontsize\normalsize{\nmls}{\nmlbs}%
+	\abovedisplayskip\z@ \belowdisplayskip\z@ 
+	\abovedisplayshortskip\z@ \belowdisplayshortskip\z@ 
+	\let\@listi\@listI}
+\normalsize
+\setlength\Cht{0.5zh}
+\setlength\Cdp{0.5zh}
+\setlength\Cwd{1zw}
+\setlength\Cvs{\baselineskip}
+\setlength\Chs{1zh}
+\renewcommand{\small}{%
+	\@setfontsize\small{\smls}{\smlbs}%
+	\abovedisplayskip\z@ \belowdisplayskip\z@ 
+	\abovedisplayshortskip\z@ \belowdisplayshortskip\z@ 
+	\let\@listi\@listI}
+\renewcommand{\footnotesize}{%
+	\@setfontsize\footnotesize{\ftns}{\ftnbs}%
+	\abovedisplayskip\z@ \belowdisplayskip\z@ 
+	\abovedisplayshortskip\z@ \belowdisplayshortskip\z@ 
+	\let\@listi\@listI}
+\renewcommand{\scriptsize}{\@setfontsize\scriptsize{\scrs}{\scrbs}}
+\renewcommand{\tiny}{\@setfontsize\tiny{0.5\nmls}{0.5\nmlbs}}
+\newcommand{\TINY}{\@setfontsize\TINY{0.25\nmls}{0.25\nmlbs}}
+\renewcommand{\huge}{\@setfontsize\huge{\hugs}{\hugbs}}
+\renewcommand{\Huge}{\@setfontsize\Huge{\huges}{\hugebs}}
+%
+%版面の設定
+%
+\setlength\columnseprule{0pt}
+\setlength\marginparsep{0pt}
+\setlength\marginparwidth{0pt}
+\setlength{\footskip}{0H}%フッタは使わないので0とする。
+\setlength\columnsep{3zw}%段間3文字分
+\textwidth=\nmlqn H
+\multiply \textwidth by \jisuu
+\advance\gyousuu by -1
+\textheight=\baselineskip
+\multiply \textheight by \gyousuu
+\advance \textheight by \nmlqn H
+\setlength\topskip{\Cht}
+\setlength\topmargin{-1in}
+%左右の空き(版面が左右中央に来るように設定)
+\dimen0=\paperwidth
+\advance\dimen0 by -\textheight
+\oddsidemargin=.5\dimen0
+\advance\oddsidemargin by -1in
+\evensidemargin=\oddsidemargin
+%余白を調整
+\addtolength\topmargin{2mm}%用紙上端とヘッダ上端の間隔
+%%\setlength\headheight{8H}%ヘッダの高さ
+\setlength\headheight{10H}%ヘッダの高さ
+%%\setlength\headsep{15H}%ヘッダの下端と本文の上端の間隔
+\setlength\headsep{13H}%ヘッダの下端と本文の上端の間隔
+%共通の設定
+\kanjiskip=0pt plus .0625zw minus .0625zw%和字間は最大16分まで延び、最大16分縮む
+\xkanjiskip=.25zw plus .083zw minus .125zw%和欧文間は最大3分まで延び、最大8分まで縮む
+\maxdepth=\topskip
+%段落の設定
+\setlength\parskip{0pt}
+\setlength\parsep{0pt}
+\setlength\partopsep{0pt}
+\setlength\parindent{0pt}
+\raggedbottom
+\AtBeginDocument{\obeylines}
+%
+%行整形用パラメータ
+%
+\clubpenalty=0
+\widowpenalty=0 
+\jcharwidowpenalty=0
+\displaywidowpenalty=0
+\prebreakpenalty\jis"2147=10000      % 5000   ’
+\postbreakpenalty\jis"2148=10000     % 5000   “
+\prebreakpenalty\jis"2149=10000      % 5000   ”
+\inhibitxspcode`〒=2
+\prebreakpenalty\jis"2133=10000
+\prebreakpenalty\jis"2134=10000
+\prebreakpenalty\jis"2135=10000
+\prebreakpenalty\jis"2136=10000
+%
+%fontの設定
+%
+\def\headfont{\mcfamily\sffamily}%\section, \subsetionの見出し
+\def\titlefont{\mcfamily\bfseries}%題名のフォント
+\def\subtitlefont{\mcfamily}%副題のフォント
+\def\authorfont{\mcfamily}%著者のフォント
+%
+%タイトル部分
+%
+\def\metadata#1{\relax}
+\def\subtitle#1{\gdef\@subtitle{#1}}
+\def\subauthor#1{\gdef\@subauthor{#1}}
+\def\biblioname{青空文庫}
+\def\azbanner{\hbox{\yoko\includegraphics[height= 1.5cm]{azlogo.eps}}\hspace*{50Q}}
+\renewcommand{\maketitle}{
+	\cleardoublepage
+	\if@twocolumn
+		\@restonecoltrue\onecolumn
+	\else
+		\@restonecolfalse\newpage
+	\fi
+	\thispagestyle{empty}
+	\setcounter{page}\@ne
+	\begingroup
+	\let\footnotesize\small
+	\let\footnoterule\relax
+	\let\thanks\p@thanks
+	\let\footnote\thanks
+	\@ifundefined{\aozora@title@style @a5}
+		{\plain@a5}%
+		{\expandafter\csname\aozora@title@style @a5\endcsname}
+	\endgroup
+	\clearpage
+	\thispagestyle{empty}
+	\az@title@back
+	\if@restonecol\twocolumn \else \newpage \fi
+	\clearpage
+	\setcounter{footnote}{0}%
+	\global\let\thanks\relax
+	\global\let\p@thanks\relax
+	\global\let\@thanks\@empty
+	\global\let\@author\@empty
+	\global\let\@date\@empty
+	\global\let\date\relax
+	\global\let\and\relax
+}%
+\def\az@title@back{%タイトルの裏
+	\vbox to\textheight{\vss%
+		\hbox to\textwidth{\tate\hfill\azbanner}
+		\vss
+	}%
+}
+%
+%デフォルトのタイトルページ
+%
+\@namedef{plain@a5}{\begingroup
+	\def\rubykatuji{\rubyfamily\small}
+	\vbox to\textheight\bgroup\tate\hsize\textwidth
+		\null\vfil
+		\begin{center}%
+		{\fontsize{40pt}{40pt}\selectfont\titlefont \@title \par}%
+		\@ifundefined{@subtitle}{\relax}{{\vskip 0.5em\huge\subtitlefont \@subtitle \par}}
+		\vskip 3em%
+		{\Huge
+		\lineskip .75em%
+		\begin{tabular}[t]{c}%
+		\authorfont\@author
+		\@ifundefined{@subauthor}{\relax}{\\\authorfont\@subauthor}
+		\end{tabular}\par}%
+		\end{center}\par
+		\vfil\null
+	\egroup
+	\endgroup
+}
+\def\cleardoublepage{\clearpage
+	\ifodd\c@page
+	\else
+		\hbox{}\thispagestyle{empty}\newpage
+		\if@twocolumn\hbox{}\newpage\fi
+	\fi
+}
+% マクロなど
+\def\ruby{\kana}
+\def\Ruby#1#2{\kana[2]{#1}{#2}}
+\def\RUBY#1#2{\kana[3]{#1}{#2}}
+\let\KANA=\KANAtop
+\def\——{—\kern-.5zw—\kern-.5zw—}
+\newenvironment{jisage}[1]{\advance\leftskip#1zw}{}
+\def\sirogomabou#1{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny\ajWhiteSesame}}\bou{#1}\egroup}
+\def\marubou#1{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny●}}\bou{#1}\egroup}
+\def\siromarubou#1{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny○}}\bou{#1}\egroup}
+\def\kurosankakubou#1{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny▲}}\bou{#1}\egroup}
+\def\sirosankakubou#1{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny△}}\bou{#1}\egroup}
+\def\nijyuumarubou#1{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny◎}}\bou{#1}\egroup}
+\def\jyanomebou#1{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny\UTF{25C9}}}\bou{#1}\egroup}
+\def\ajKunojiwithsirogomaBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny\ajWhiteSesame}}\ajKunojiwithBou\egroup}
+\def\ajKunojiwithmaruBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny●}}\ajKunojiwithBou\egroup}
+\def\ajKunojiwithsiromaruBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny○}}\ajKunojiwithBou\egroup}
+\def\ajKunojiwithkurosankakuBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny▲}}\ajKunojiwithBou\egroup}
+\def\ajKunojiwithsirosankakuBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny△}}\ajKunojiwithBou\egroup}
+\def\ajKunojiwithnijyuumaruBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny◎}}\ajKunojiwithBou\egroup}
+\def\ajKunojiwithjyanomeBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny\UTF{25C9}}}\ajKunojiwithBou\egroup}
+\def\ajDKunojiwithsirogomaBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny\ajWhiteSesame}}\ajDKunojiwithBou\egroup}
+\def\ajDKunojiwithmaruBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny●}}\ajDKunojiwithBou\egroup}
+\def\ajDKunojiwithsiromaruBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny○}}\ajDKunojiwithBou\egroup}
+\def\ajDKunojiwithkurosankakuBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny▲}}\ajDKunojiwithBou\egroup}
+\def\ajDKunojiwithsirosankakuBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny△}}\ajDKunojiwithBou\egroup}
+\def\ajDKunojiwithnijyuumaruBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny◎}}\ajDKunojiwithBou\egroup}
+\def\ajDKunojiwithjyanomeBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny\UTF{25C9}}}\ajDKunojiwithBou\egroup}
+\def\kaeriten#1{%
+	\nobreak\setbox1\hbox{あ}\setbox2\hbox{\tiny あ}
+	\ifdim\ht1=\ht2
+		\setbox1\hbox{あ}\setbox2\hbox{\TINY あ}
+		\dimen1=\ht1 \advance\dimen1 by -\ht2
+		\raisebox{-\dimen1}{\TINY #1}%
+	\else
+		\dimen1=\ht1 \advance\dimen1 by -\ht2
+		\raisebox{-\dimen1}{\tiny #1}%
+	\fi
+}%
+\def\okurigana#1{%
+	\nobreak\setbox1\hbox{あ}\setbox2\hbox{\tiny あ}
+	\ifdim\ht1=\ht2
+		\setbox1\hbox{あ}\setbox2\hbox{\TINY あ}
+		\dimen1=\ht1 \advance\dimen1 by -\ht2
+		\raisebox{\dimen1}{\TINY #1}%
+	\else
+		\dimen1=\ht1 \advance\dimen1 by -\ht2
+		\raisebox{\dimen1}{\tiny #1}%
+	\fi
+}%
+\def\sashie#1{%
+   \hbox{\yoko\includegraphics[keepaspectratio=true, width = 8cm]{#1}}
+}%
+\def\bousen#1{#1}
+\AtBeginDvi{\special{pdf: pagesize height \the\paperheight\space width \the\paperwidth}}
+\AtBeginDvi{\special{pdf:docview <</ViewerPreferences <</Direction /R2L>> >>}}
+%
+%後註の定義
+%
+\newcounter{notecount} 
+\setcounter{notecount}{0}
+\def\thenotecount{\@arabic\c@notecount}
+\def\endnote#1{%
+	\stepcounter{notecount}%
+	\raisebox{0.75zh}{\tiny\kanji\c@notecount}%
+	\expandafter\gdef\csname note@\number\c@notecount\endcsname{#1}%
+}
+\def\endnotehead{後註}
+\def\theendnotes{%
+	\@ifundefined{note@1}{\relax}{%
+		{\headfont\normalsize\noindent\endnotehead\par}%
+		\@tempcnta=\thenotecount\relax%
+		\advance\@tempcnta by1\relax%
+		\setcounter{notecount}{0}%
+		\begin{description}
+		\footnotesize
+		\loop
+			\stepcounter{notecount}
+		\ifnum\@tempcnta>\c@notecount
+			\item[\kanji\c@notecount]\csname note@\number\c@notecount\endcsname\par
+			\global\expandafter\let\csname note@\number\c@notecount\endcsname=\@undefined%
+		\repeat
+		\end{description}
+	}%
+	\setcounter{notecount}{0}%
+}
+%
+%ヘッダの定義
+%
+\def\ps@aozora{\let\ps@jpl@in\ps@headnombre
+	\let\@oddfoot\@empty\let\@evenfoot\@empty
+	\def\@oddhead{\scriptsize\null
+		\hspace*{\nmls}\@ifundefined{@title}{\relax}{\@title}%
+		\hspace*{1zw}\@ifundefined{@subtitle}{\relax}{\@subtitle}%
+		\hfil}
+	\let\@evenhead\@oddhead
+	\let\@mkboth\markboth
+}
+\pagestyle{aozora}
+%
+%底本の処理の変更（ダミー環境）
+%
+\newenvironment{teihon}{\relax}{\relax}
+%
+%紙面の上下に紙幅の線を引く
+%
+\newdimen\waku@line@width
+\setlength{\waku@line@width}{.1\p@}
+\newdimen\waku@top@shift
+\setlength{\waku@top@shift}{-1in}
+\newdimen\waku@left@shift
+\setlength{\waku@left@shift}{1in}
+\newbox\@WTC
+\newbox\@WBC
+\def\makewakubox{%
+	\setbox\@WTC\hbox to\z@{\yoko\hss
+		\vrule width \paperwidth height\z@ depth\waku@line@width\hss}%
+	\setbox\@WBC\hbox to\z@{\yoko\hss
+		\vrule width \paperwidth depth\z@ height\waku@line@width\hss}%
+}
+\let\orig@outputtombow\@outputtombow
+\def\@outputtombow{%
+	\iftombow
+		\orig@outputtombow
+	\else
+		\if@waku
+			\moveleft\waku@left@shift\vbox to\z@{\kern\waku@top@shift\relax
+				\vbox to\paperheight{%
+					\hbox to\paperwidth{\hss\copy\@WTC\hss}%
+					\vss
+					\hbox to\paperwidth{\hss\copy\@WBC\hss}%
+				}\vss
+			}%
+		\fi
+	\fi
+}
+\if@waku
+	\setlength{\waku@line@width}{.1\p@}%
+	\makewakubox%
+\fi
+\endinput
+%based on aozora.sty by psitau

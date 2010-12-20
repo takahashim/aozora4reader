@@ -1,0 +1,661 @@
+\NeedsTeXFormat{pLaTeX2e}
+\ProvidesPackage{aozora}[2004/05/05 v1.0b3 psitau]
+\RequirePackage{verbatim}
+\RequirePackage{keyval}
+%
+%スタイルオプション
+%
+\newif\if@aaaaland \@aaaalandfalse
+\newif\if@bbbbb \@bbbbbfalse
+\newif\if@twoup \@twoupfalse
+\newif\if@nakatoji \@nakatojifalse
+\def\aozora@title@style{plain}
+\def\aozora@dviware{dvipdfm}
+\define@key{aozora}{title}[plain]{\def\aozora@title@style{#1}}
+\define@key{aozora}{dviware}[dvipdfm]{\def\aozora@dviware{#1}}
+\define@key{aozora}{final}[true]{\let\footnote\@gobble}
+\define@key{aozora}{draft}[false]{\relax}
+\define@key{aozora}{a4land}[false]{\@aaaalandtrue\@bbbbbfalse}
+\define@key{aozora}{b5}[false]{\@aaaalandfalse\@bbbbbtrue}
+\define@key{aozora}{2up}[false]{\@twouptrue\@nakatojifalse}
+\define@key{aozora}{nakatoji}[false]{\@twoupfalse\@nakatojitrue}
+\def\ProcessOptionsWithKV#1{%
+	\let\@tempc\relax%
+	\let\aozora@tempa\@empty
+	\@for\CurrentOption:=\@classoptionslist\do{%
+		\@ifundefined{KV@#1@\CurrentOption}%
+		{}%
+		{\edef\aozora@tempa{\aozora@tempa,\CurrentOption,}}%
+	}%
+	\edef\aozora@tempa{%
+		\noexpand\setkeys{#1}{%
+			\aozora@tempa\@ptionlist{\@currname.\@currext}%
+		}%
+	}%
+	\aozora@tempa
+}
+\ProcessOptionsWithKV{aozora}
+\AtEndOfPackage{%
+	\let\@unprocessedoptions\relax
+}
+%graphic packageの読み込み
+\RequirePackage[\aozora@dviware]{graphicx}
+%
+%文字サイズの設定
+%
+\newlength{\JQ}
+\setlength{\JQ}{0.259817mm}
+\renewcommand{\normalsize}{%
+	\@setfontsize\normalsize{13\JQ}{23H}%本文13級  行送り23歯
+	\abovedisplayskip\z@ \belowdisplayskip\z@ 
+	\abovedisplayshortskip\z@ \belowdisplayshortskip\z@
+	\let\@listi\@listI}
+%\normalsize
+\setlength\Cht{6.5Q}
+\setlength\Cdp{6.5Q}
+\setlength\Cwd{13Q}
+\setlength\Cvs{\baselineskip}
+\setlength\Chs{13Q}
+\renewcommand{\small}{%
+	\@setfontsize\small{12\JQ}{21H}%
+	\abovedisplayskip\z@ \belowdisplayskip\z@ 
+	\abovedisplayshortskip\z@ \belowdisplayshortskip\z@
+	\let\@listi\@listI}
+\renewcommand{\footnotesize}{%
+	\@setfontsize\footnotesize{11\JQ}{16H}%
+	\abovedisplayskip\z@ \belowdisplayskip\z@ 
+	\abovedisplayshortskip\z@ \belowdisplayshortskip\z@
+	\let\@listi\@listI}
+\renewcommand{\scriptsize}{\@setfontsize\scriptsize{9\JQ}{12H}}
+\renewcommand{\tiny}{\@setfontsize\tiny{6.5\JQ}{9H}}
+\renewcommand{\large}{\@setfontsize\large{14\JQ}{23H}}
+\renewcommand{\Large}{\@setfontsize\Large{18\JQ}{31H}}
+\renewcommand{\LARGE}{\@setfontsize\LARGE{20\JQ}{36H}}
+\renewcommand{\huge}{\@setfontsize\huge{24\JQ}{40H}}
+\renewcommand{\Huge}{\@setfontsize\Huge{36\JQ}{47H}}
+\newcommand{\HUGE}{\@setfontsize\HUGE{60}{72}}
+\newcommand{\TINY}{\@setfontsize\TINY{3.25\JQ}{4.5H}}
+%
+%版面の設定
+%
+\setlength\columnseprule{0pt}
+\setlength\marginparsep{0pt}
+\setlength\marginparwidth{0pt}
+\setlength\columnsep{39H}%段間3文字分
+\if@bbbbb
+	\addtolength\topmargin{0.5cm}
+	\if@twocolumn
+		\setlength\textwidth{819H}%１行63字詰、1段30字詰め
+	\else
+		\PackageError{aozora}{You can't use a onecolumn option in b5.}{Use an twocolumn option.}
+	\fi
+	\setlength\textheight{552H}
+	\@twoupfalse
+\else
+	\if@aaaaland
+		\if@twocolumn
+			\PackageError{aozora}{You can't use a twocolumn option in a4land.}{Use an onecolumn option.}
+		\else
+			\setlength\textwidth{650H}%50字詰
+		\fi
+		\setlength\textheight{943H}
+		\@twoupfalse
+	\else
+		\if@twocolumn
+			\setlength\textwidth{689H}%１行53字詰、1段25字詰め
+		\else
+			\setlength\textwidth{650H}%50字詰
+		\fi
+		\setlength\textheight{414H}
+	\fi
+\fi
+\addtolength\textheight{13H}
+\setlength\topmargin{-1in}
+\addtolength\topmargin{1cm}
+\setlength\headheight{20H}
+\setlength\topskip{\Cht}
+\setlength\headsep{20H}
+\setlength{\footskip}{23H}
+%左右の空き(版面が左右中央に来るように設定)
+\dimen0=\paperwidth
+\advance\dimen0 by -\textheight
+\oddsidemargin=.5\dimen0
+\advance\oddsidemargin by -1in
+\evensidemargin=\oddsidemargin
+%共通の設定
+\kanjiskip=0pt plus .0625zw minus .0625zw%和字間は最大16分まで延び、最大16分縮む
+\xkanjiskip=.25zw plus .083zw minus .125zw%和欧文間は最大3分まで延び、最大8分まで縮む
+\maxdepth=\topskip
+%段落の設定
+\setlength\parskip{0pt}
+\setlength\parsep{0pt}
+\setlength\partopsep{0pt}
+\setlength\parindent{0pt}
+\raggedbottom
+\AtBeginDocument{\obeylines}
+%
+%行整形用パラメータ
+%
+\clubpenalty=0
+\widowpenalty=0 
+\jcharwidowpenalty=0
+\displaywidowpenalty=0
+\prebreakpenalty\jis"2147=10000      % 5000   ’
+\postbreakpenalty\jis"2148=10000     % 5000   “
+\prebreakpenalty\jis"2149=10000      % 5000   ”
+\inhibitxspcode`〒=2
+\prebreakpenalty\jis"2133=10000
+\prebreakpenalty\jis"2134=10000
+\prebreakpenalty\jis"2135=10000
+\prebreakpenalty\jis"2136=10000
+%
+%fontの設定
+%
+\def\chapterfont{\mcfamily\bfseries}%\chapterの見出し
+\def\headfont{\gtfamily\sffamily}%\section, \subsetionの見出し
+\def\titlefont{\gtfamily\bfseries}%題名のフォント
+\def\subtitlefont{\gtfamily}%副題のフォント
+\def\authorfont{\gtfamily}%著者のフォント
+%
+% chapterの再定義
+%
+\def\chapter#1{%
+	\cleardoublepage
+	\if@twocolumn
+		\@restonecoltrue\onecolumn
+	\else
+		\@restonecolfalse\newpage
+	\fi
+	\thispagestyle{empty}%
+	\let\footnotesize\small
+	\let\footnoterule\relax
+	\begingroup
+	\def\rubykatuji{\rubyfamily\small}
+	\vbox to\textheight\bgroup\tate\hsize\textwidth
+		\vfil
+		{\centering\Huge\chapterfont #1\par}%
+		\vfil
+	\egroup
+	\endgroup
+	\markboth{}{#1}
+	\addcontentsline{toc}{chapter}{#1}
+	\if@restonecol\twocolumn \else \newpage \fi
+}
+\def\@chapter[#1]#2{%著者名付き
+	\cleardoublepage
+	\if@twocolumn
+		\@restonecoltrue\onecolumn
+	\else
+		\@restonecolfalse\newpage
+	\fi
+	\thispagestyle{empty}%
+	\let\footnotesize\small
+	\let\footnoterule\relax
+	\begingroup
+	\def\rubykatuji{\rubyfamily\small}
+	\vbox to\textheight\bgroup\tate\hsize\textwidth
+		\vfil
+		{\centering\Huge\chapterfont #2\par}%
+		{\centering\huge\chapterfont #1\par}%
+		\vfil
+	\egroup
+	\endgroup
+	\markboth{}{#2}
+	\addcontentsline{toc}{chapter}{#2　#1}
+	\if@restonecol\twocolumn \else \newpage \fi
+}
+%
+%セクションの再定義
+%
+\def\@startsection#1#2#3#4#5#6{%
+	\if@noskipsec \leavevmode \fi
+	\par
+	\@tempskipa #4\relax
+	\@afterindenttrue
+	\ifdim \@tempskipa <\z@
+		\@tempskipa -\@tempskipa \@afterindentfalse
+	\fi
+	\if@nobreak
+		\ifnum#2=2\vspace{\sectosubsec}\fi
+		\everypar{}%
+	\else
+		\addpenalty\@secpenalty
+		\ifdim \@tempskipa >\z@
+			\null
+			\vspace*{-\baselineskip}\vskip\@tempskipa
+		\fi
+	\fi
+	\noindent
+	\@ifstar
+	{\@ssect{#3}{#4}{#5}{#6}}%
+	{\@dblarg{\@sect{#1}{#2}{#3}{#4}{#5}{#6}}}}
+
+\def\@sect#1#2#3#4#5#6[#7]#8{%
+	\ifnum #2>\c@secnumdepth
+		\let\@svsec\@empty
+	\else
+		\refstepcounter{#1}%
+		\protected@edef\@svsec{\@seccntformat{#1}\relax}%
+	\fi
+	\@tempskipa #5\relax
+	\ifdim \@tempskipa<\z@
+		\def\@svsechd{%
+			#6{\hskip #3\relax
+			\@svsec #8}%
+		\csname #1mark\endcsname{#7}%
+		\addcontentsline{toc}{#1}{%
+		\ifnum #2>\c@secnumdepth \else
+			\protect\numberline{\csname the#1\endcsname}%
+		\fi
+		#7}}
+	\else
+		\begingroup
+			\interlinepenalty \@M
+			#6{%
+			\@hangfrom{\hskip #3\relax\@svsec}%
+			#8\@@par}%
+		\endgroup
+		\csname #1mark\endcsname{#7}%
+		\addcontentsline{toc}{#1}{%
+		\ifnum #2>\c@secnumdepth \else
+			\protect\numberline{\csname the#1\endcsname}%
+		\fi
+		#7}% 目次にフルネームを載せるなら #8
+	\fi
+	\@xsect{#5}}
+%
+%***************from ipsj style file*******************
+%
+%% Modify \@xsect to avoid (buggy) \clubpenalty=10000. (H.N.)
+%
+\def\@xsect#1{\@tempskipa #1\relax
+	\ifdim \@tempskipa<\z@
+		\glboal\@nobreakfalse \global\@noskipsectrue
+		\everypar{\global\@noskipsecfalse \hskip-\parindent
+			\begingroup \@svsechd \endgroup \unskip
+			\hskip -#1\everypar{}}%
+	\else
+		\par \nobreak
+		\vskip \@tempskipa \global\@nobreaktrue
+		\everypar{\global\@nobreakfalse
+			\if@afterindent\else {\setbox0\lastbox}\fi%
+			\everypar{}}%
+	\fi\ignorespaces}
+
+\def\@ssect#1#2#3#4#5{%
+	\@tempskipa #3\relax
+	\ifdim \@tempskipa<\z@
+		\def\@svsechd{#4{\hskip #1\relax #5}}
+	\else
+		\begingroup
+			#4{%
+			\@hangfrom{\hskip #1}%
+			\interlinepenalty \@M #5\@@par}%
+		\endgroup
+	\fi
+	\@xsect{#3}}
+%
+%セクション
+%
+\def\metadata#1{\relax}
+\def\subtitle#1{\gdef\@subtitle{#1}}
+\def\subauthor#1{\gdef\@subauthor{#1}}
+\renewcommand{\section}{\@startsection{section}{1}{\z@}{23H}{23H}{\@sectionfont}}%3行取り
+\renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}%
+  {11.5H}{11.5H}{\@subsectionfont}}%2行取り、sectionの直後だと合わせて4行取り
+\def\@sectionfont{\reset@font\seclarge\headfont}
+\def\@subsectionfont{\reset@font\subseclarge\headfont}
+\newcommand{\seclarge}{\@setfontsize\seclarge{18\JQ}{23H}}
+\newcommand{\subseclarge}{\@setfontsize\subseclarge{14\JQ}{23H}}
+\newlength{\sectosubsec}
+\setlength{\sectosubsec}{-11.5H}
+%
+%タイトル部分
+%
+\def\biblioname{青空文庫}
+\def\azbanner{\hbox{\yoko\includegraphics[height= 1.5cm]{azlogo.eps}}\hspace*{50Q}}
+\renewcommand{\maketitle}{
+	\cleardoublepage
+	\if@twoup
+		\c@page=0
+		\null\thispagestyle{empty}\clearpage
+	\fi
+	\if@twocolumn
+		\@restonecoltrue\onecolumn
+	\else
+		\@restonecolfalse\newpage
+	\fi
+	\thispagestyle{empty}
+	\setcounter{page}\@ne
+	\begingroup
+	\let\footnotesize\small
+	\let\footnoterule\relax
+	\let\thanks\p@thanks
+	\let\footnote\thanks
+	\if@bbbbb
+			\@ifundefined{\aozora@title@style @b5}
+				{\plain@a5}%
+				{\expandafter\csname\aozora@title@style @b5\endcsname}
+	\else
+		\if@aaaaland
+			\@ifundefined{\aozora@title@style @a4land}
+				{\plain@a4land}%
+				{\expandafter\csname\aozora@title@style @a4land\endcsname}
+		\else
+			\@ifundefined{\aozora@title@style @a5}
+				{\plain@a5}%
+				{\expandafter\csname\aozora@title@style @a5\endcsname}
+		\fi
+	\fi
+	\endgroup
+	\clearpage
+	\thispagestyle{empty}
+	\az@title@back
+	\if@restonecol\twocolumn \else \newpage \fi
+	\clearpage
+	\setcounter{footnote}{0}%
+	\global\let\thanks\relax
+	\global\let\p@thanks\relax
+	\global\let\@thanks\@empty
+	\global\let\@author\@empty
+	\global\let\@date\@empty
+	\global\let\@title\@empty
+	\global\let\date\relax
+	\global\let\and\relax
+}%
+\def\az@title@back{%タイトルの裏
+	\vbox to\textheight{\vss%
+		\hbox to\textwidth{\tate\hfill\azbanner}
+		\vss
+	}%
+}
+%
+%デフォルトのタイトルページ
+%
+\@namedef{plain@a5}{\begingroup
+	\def\rubykatuji{\rubyfamily\small}
+	\vbox to\textheight\bgroup\tate\hsize\textwidth
+		\null\vfil
+		\begin{center}%
+		{\Huge\titlefont \@title \par}%
+		\@ifundefined{@subtitle}{\relax}{{\vskip 0.5em\huge\subtitlefont \@subtitle \par}}
+		\vskip 3em%
+		{\huge
+		\lineskip .75em%
+		\begin{tabular}[t]{c}%
+		\authorfont\@author
+		\@ifundefined{@subauthor}{\relax}{\\\authorfont\@subauthor}
+		\end{tabular}\par}%
+		\end{center}\par
+		\vfil\null
+	\egroup
+	\endgroup
+}
+\@namedef{plain@a4land}{\begingroup
+	\def\rubykatuji{\rubyfamily\small}
+	\vbox to \textwidth\bgroup\yoko\hsize\textheight
+	\null\vfil
+	\begin{center}%
+		{\HUGE\titlefont\kanjiskip 0pt plus 0pt minus 0pt \@title \par}%
+		\vskip 3em%
+		{\Huge
+			\lineskip .75em%
+			\begin{tabular}[t]{c}%
+				\authorfont\@author
+				\@ifundefined{@subauthor}{\relax}{\\\authorfont\@subauthor}
+			\end{tabular}\par}%
+	\end{center}\par
+	\vfil\null
+	\egroup
+	\endgroup
+}
+\def\cleardoublepage{\clearpage
+	\ifodd\c@page
+	\else
+		\hbox{}\thispagestyle{empty}\newpage
+		\if@twocolumn\hbox{}\newpage\fi
+	\fi
+}
+% マクロなど
+\def\ruby{\kana}
+\def\Ruby#1#2{\kana[2]{#1}{#2}}
+\def\RUBY#1#2{\kana[3]{#1}{#2}}
+\let\KANA=\KANAtop
+\def\――{―\kern-.5zw―\kern-.5zw―}
+\newenvironment{jisage}[1]{\advance\leftskip#1zw}{}
+\def\sirogomabou#1{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny\ajWhiteSesame}}\bou{#1}\egroup}
+\def\marubou#1{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny●}}\bou{#1}\egroup}
+\def\siromarubou#1{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny○}}\bou{#1}\egroup}
+\def\kurosankakubou#1{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny▲}}\bou{#1}\egroup}
+\def\sirosankakubou#1{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny△}}\bou{#1}\egroup}
+\def\nijyuumarubou#1{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny◎}}\bou{#1}\egroup}
+\def\jyanomebou#1{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny\UTF{25C9}}}\bou{#1}\egroup}
+\def\ajKunojiwithsirogomaBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny\ajWhiteSesame}}\ajKunojiwithBou\egroup}
+\def\ajKunojiwithmaruBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny●}}\ajKunojiwithBou\egroup}
+\def\ajKunojiwithsiromaruBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny○}}\ajKunojiwithBou\egroup}
+\def\ajKunojiwithkurosankakuBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny▲}}\ajKunojiwithBou\egroup}
+\def\ajKunojiwithsirosankakuBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny△}}\ajKunojiwithBou\egroup}
+\def\ajKunojiwithnijyuumaruBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny◎}}\ajKunojiwithBou\egroup}
+\def\ajKunojiwithjyanomeBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny\UTF{25C9}}}\ajKunojiwithBou\egroup}
+\def\ajDKunojiwithsirogomaBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny\ajWhiteSesame}}\ajDKunojiwithBou\egroup}
+\def\ajDKunojiwithmaruBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny●}}\ajDKunojiwithBou\egroup}
+\def\ajDKunojiwithsiromaruBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny○}}\ajDKunojiwithBou\egroup}
+\def\ajDKunojiwithkurosankakuBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny▲}}\ajDKunojiwithBou\egroup}
+\def\ajDKunojiwithsirosankakuBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny△}}\ajDKunojiwithBou\egroup}
+\def\ajDKunojiwithnijyuumaruBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny◎}}\ajDKunojiwithBou\egroup}
+\def\ajDKunojiwithjyanomeBou{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny\UTF{25C9}}}\ajDKunojiwithBou\egroup}
+\def\kaeriten#1{%
+	\nobreak\setbox1\hbox{あ}\setbox2\hbox{\tiny あ}
+	\ifdim\ht1=\ht2
+		\setbox1\hbox{あ}\setbox2\hbox{\TINY あ}
+		\dimen1=\ht1 \advance\dimen1 by -\ht2
+		\raisebox{-\dimen1}{\TINY #1}%
+	\else
+		\dimen1=\ht1 \advance\dimen1 by -\ht2
+		\raisebox{-\dimen1}{\tiny #1}%
+	\fi
+}%
+\def\okurigana#1{%
+	\nobreak\setbox1\hbox{あ}\setbox2\hbox{\tiny あ}
+	\ifdim\ht1=\ht2
+		\setbox1\hbox{あ}\setbox2\hbox{\TINY あ}
+		\dimen1=\ht1 \advance\dimen1 by -\ht2
+		\raisebox{\dimen1}{\TINY #1}%
+	\else
+		\dimen1=\ht1 \advance\dimen1 by -\ht2
+		\raisebox{\dimen1}{\tiny #1}%
+	\fi
+}%
+\def\bousen#1{#1}
+\if@twoup
+	\dimen0=2\paperwidth
+	\AtBeginDvi{\special{pdf: pagesize height \the\paperheight\space width \the\dimen0}}
+	\RequirePackage[notombow, spread]{1010crop}
+\fi
+\if@nakatoji \else
+	\AtBeginDvi{\special{pdf: pagesize height \the\paperheight\space width \the\paperwidth}}
+	\AtBeginDvi{\special{pdf:docview <</ViewerPreferences <</Direction /R2L>> >>}}
+\fi
+\newcounter{notecount} 
+\setcounter{notecount}{0}
+\def\thenotecount{\@arabic\c@notecount}
+\def\endnote#1{%
+	\stepcounter{notecount}%
+	\raisebox{0.75zh}{\tiny\ajTsumekakko{\c@notecount}}%
+	\expandafter\gdef\csname note@\number\c@notecount\endcsname{#1}%
+}
+\def\endnotehead{後註}
+\def\theendnotes{%
+	\@ifundefined{note@1}{\relax}{%
+		\expandafter\subsection*{\endnotehead}%
+		\@tempcnta=\thenotecount\relax%
+		\advance\@tempcnta by1\relax%
+		\setcounter{notecount}{0}%
+		\begin{description}
+		\loop
+			\stepcounter{notecount}
+		\ifnum\@tempcnta>\c@notecount
+			\item[\ajTsumekakko{\c@notecount}]\csname note@\number\c@notecount\endcsname\par
+			\global\expandafter\let\csname note@\number\c@notecount\endcsname=\@undefined%
+		\repeat
+		\end{description}
+	}%
+	\setcounter{notecount}{0}%
+}
+%
+%複數文書の同時処理
+%
+\def\ArticleInput#1{%
+	\begingroup
+		\def\documentclass[##1]##2{\relax}
+		\def\usepackage{\@ifnextchar[{\az@temp@usepackage}{\az@temp@usepackage[]}}
+		\def\az@temp@usepackage[##1]##2{\relax}
+		\def\maketitle{\@chapter[\@author]{\@title}}
+		\def\document{\relax}
+		\let\enddocument\endinput
+		\renewenvironment{teihon}{\comment}{\endcomment}
+		\def\renewenvironment##1##2##3{\relax}
+		\input{#1}
+	\endgroup
+}
+\def\articleinput#1{%
+	\begingroup
+		\def\documentclass[##1]##2{\relax}
+		\def\usepackage{\@ifnextchar[{\az@temp@usepackage}{\az@temp@usepackage[]}}
+		\def\az@temp@usepackage[##1]##2{\relax}
+		\def\maketitle{\chapter{\@title}}
+		\def\author##1{\relax}
+		\def\document{\relax}
+		\let\enddocument\endinput
+		\renewenvironment{teihon}{\comment}{\endcomment}
+		\def\renewenvironment##1##2##3{\relax}
+		\input{#1}
+	\endgroup
+}
+%
+%ヘッダの定義
+%
+\def\ps@aozora{\let\ps@jpl@in\ps@headnombre
+	\let\@oddfoot\@empty\let\@evenfoot\@empty
+	\def\@evenhead{\footnotesize\hfil\leftmark\hspace*{36H}\thepage\hspace*{13H}\null}%
+	\def\@oddhead{\footnotesize\null\hspace*{13H}\thepage\hspace*{36H}\rightmark\hfil}%
+	\let\@mkboth\markboth
+}
+\pagestyle{aozora}
+%
+%底本の処理の変更（ダミー環境）
+%
+\newenvironment{teihon}{\relax}{\relax}
+%
+%目次の体裁の設定
+%
+\def\addcontentsline#1#2#3{%
+	\protected@write\@auxout
+	{\let\label\@gobble \let\index\@gobble \let\glossary\@gobble
+	\@temptokena{\rensuji{\ajLabel\ajTsumesuji2{page}}}}%
+	{\string\@writefile{#1}%
+	{\protect\contentsline{#2}{#3}{\the\@temptokena}}}%
+}
+\setcounter{tocdepth}{0}%目次に載るのは\chapterまで
+\renewcommand{\@pnumwidth}{2zw}
+\setlength\toclineskip{\z@}
+\def\contentsname{目\hskip2zw 次}
+\renewcommand{\tableofcontents}{%
+	\if@twocolumn\@restonecoltrue\onecolumn\else\@restonecolfalse\fi
+	\begingroup
+		\if@twoup \clearpage\else \cleardoublepage\fi
+		\pagestyle{empty}
+		\vspace*{1\baselineskip}
+		{\leftskip13zw\mcfamily\contentsname\par}
+		\vspace*{0.5\baselineskip}
+		\@starttoc{toc}%
+		\clearpage
+	\endgroup
+	\if@restonecol\twocolumn\fi
+}
+\renewcommand*{\l@chapter}[2]{%
+	\ifnum \c@tocdepth >\m@ne
+		\begingroup
+			\vspace{0.5\baselineskip}
+			\rightskip\@pnumwidth
+			\advance\rightskip15zw
+			\parfillskip-\@pnumwidth
+			\leftskip10zw
+			\leavevmode
+			#1\hskip1zw\nobreak\leaders\hbox to 1zw{…}\hfil\nobreak\hbox to\@pnumwidth{\hss#2}\par
+		\endgroup
+	\fi
+}
+%
+%タイトルページのヴァリエーション
+%
+\def\reserved@a{webomints}
+\ifx\aozora@title@style\reserved@a
+	\@namedef{webomints@a5}{\begingroup
+		\def\wb##1##2{\fontsize{##1}{##2}\usefont{U}{webo}{xl}{n}}
+		\def\rubykatuji{\rubyfamily\small}
+		\def\titlefont{\mcfamily\bfseries\propshape}
+		\def\authorfont{\mcfamily}
+		\if@restonecol \dimen1=0.92\textwidth \else \dimen1=0.97\textwidth\fi
+		\leavevmode\hspace*{3mm}\hbox to 0pt{%
+		\vbox to \dimen1\bgroup\yoko\hsize\textheight
+			\hbox to \textheight{{\wb{36bp}{36bp}A}\hfil{\wb{36bp}{36bp}B}}\par
+			\vskip 100pt
+			\begin{center}%
+			\begin{minipage}{0.8\textheight}
+			{\centering\Huge\titlefont \@title \par}%
+			\@ifundefined{@subtitle}{\relax}{{\vskip 0.5em\centering\huge\subtitlefont \@subtitle \par}}
+			\end{minipage}
+			\vskip 30pt%
+			{\huge
+			\lineskip .75em%
+			\begin{tabular}[t]{c}%
+			\authorfont\@author
+			\@ifundefined{@subauthor}{\relax}{\\\authorfont\@subauthor}
+			\end{tabular}\par}%
+			\vfil
+			{\wb{15bp}{15bp}8}\par
+			\vskip 15pt%
+			{\large\mcfamily\bfseries \biblioname \par}%
+			\end{center}\par
+			\hbox to \textheight{{\wb{36bp}{36bp}C}\hfil{\wb{36bp}{36bp}D}}\par
+		\egroup
+		\hss}
+		\endgroup
+	}
+\fi
+\def\reserved@a{framed}
+\ifx\aozora@title@style\reserved@a
+	\RequirePackage{niceframe}
+	\@namedef{framed@a5}{\begingroup
+		\def\rubykatuji{\rubyfamily\small}
+		\def\titlefont{\mcfamily\bfseries}
+		\def\authorfont{\mcfamily}
+		\if@restonecol \dimen1=0.92\textwidth \else \dimen1=0.97\textwidth\fi
+		\leavevmode\hspace*{3mm}\hbox to 0pt{%
+		\vbox to \dimen1\bgroup\yoko\hsize\textheight
+			\vskip 60pt
+			\hbox to \textheight{\hss\niceframe[0.8\textheight]{%
+			\begin{center}%
+			\begin{minipage}{0.6\textheight}
+			{\centering\Huge\titlefont \@title \par}%
+			\@ifundefined{@subtitle}{\relax}{{\vskip 0.5em\centering\huge\subtitlefont \@subtitle \par}}
+			\end{minipage}
+			\vskip 10pt%
+			{\huge
+			\lineskip .75em%
+			\begin{tabular}[t]{c}%
+			\authorfont\@author
+			\@ifundefined{@subauthor}{\relax}{\\\authorfont\@subauthor}
+			\end{tabular}\par}%
+			\vskip 20pt
+			{\ding C}\par
+			\vskip 5pt%
+			{\large\mcfamily\bfseries \biblioname \par}%
+			\end{center}\par
+			}\hss}
+		\egroup
+		\endgroup
+	}
+\fi
+\endinput
