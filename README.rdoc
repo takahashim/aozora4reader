@@ -13,14 +13,7 @@ You can use a4r command to convert into LaTeX file.
 
   $ a4r <aozora bunko file>
 
-  ex. a4r kokoro.txt
-
-You also can use -a option to generate PDF file.
-
-  ex. a4r -a kokoro.txt
-
-When using -a option, you need LaTeX environment and dvipdfmx.
-
+    ex. 'a4r kokoro.txt'
 
 == Sources
 
