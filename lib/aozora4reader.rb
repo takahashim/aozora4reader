@@ -72,7 +72,7 @@ class Aozora4Reader
 \\def\\rubykatuji{\\rubyfamily\\tiny}
 %\\def\\rubykatuji{\\tiny}%for UTF package
 %\\renewenvironment{teihon}{\\comment}{\\endcomment}
-\\usepackage[dvipdfm,bookmarks=true,bookmarksnumbered=true,%
+\\usepackage[dvipdfm,bookmarks=true,bookmarksnumbered=false,%
             pdftitle={#{@title}},%
             pdfauthor={#{@author}}]{hyperref}
 %% Bookmarkの文字化け対策（日本語向け）
