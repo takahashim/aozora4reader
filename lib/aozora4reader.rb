@@ -101,6 +101,28 @@ END_OF_POST
     str
   end
 
+  # アクセントの処理用
+  # http://www.aozora.gr.jp/accent_separation.html
+  # http://cosmoshouse.com/tools/acc-conv-j.htm
+  def translate_accent(l)
+    l.gsub!(/([ij]):/){"\\\"{\\#{$1}}"}
+    l.gsub!(/([AIOEUaioeu])(['`~^])/){"\\#$2{#$1}"}
+    l.gsub!(/([AIOEUaioeu]):/){"\\\"{#$1}"}
+    l.gsub!(/([AIOEUaioeu])_/){"\\={#$1}"}
+    l.gsub!(/([!?])@/){"#$1'"}
+    l.gsub!(/([Aa])&/){"\\r{#$1}"}
+    l.gsub!(/AE&/){"\\AE"}
+    l.gsub!(/ae&/){"\\ae"}
+    l.gsub!(/OE&/){"\\OE"}
+    l.gsub!(/oe&/){"\\oe"}
+    l.gsub!(/s&/){"\\ss"}
+    l.gsub!(/([cC]),/){"\\c{#$1}"}
+    l.gsub!(/〔/,'')
+    l.gsub!(/〕/,'')
+    return l
+  end
+
+
   # 外字の処理用
   def translate_gaiji(l)
     if l =~ /※［＃[^］]*?※［＃[^］]*?[12]\-\d{1,2}\-\d{1,2}[^］]*?］[^］]*?］/
@@ -392,6 +414,11 @@ END_OF_POST
       if line =~ /［＃改[頁|ページ].*?］/
         line.sub!(/［＃改[頁|ページ].*?］/, "\\clearpage")
       end
+
+      if line =~ /〔.*?〕/
+        translate_accent(line)
+      end
+
       if line =~ /※/
         translate_gaiji(line)
       end

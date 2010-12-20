@@ -15,12 +15,14 @@ Gem::Specification.new do |s|
   s.email = %q{maki@rubycolor.org}
   s.executables = ["a4r"]
   s.extra_rdoc_files = [
-    "LICENSE",
+    "ChangeLog",
+     "LICENSE",
      "README.rdoc"
   ]
   s.files = [
     ".document",
      ".gitignore",
+     "ChangeLog",
      "LICENSE",
      "README.rdoc",
      "Rakefile",
