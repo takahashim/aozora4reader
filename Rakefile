@@ -13,6 +13,7 @@ begin
     gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
     gem.files.include << "data/gaiji.txt"
+    gem.files.include << "data/gaiji2.txt"
     gem.files.include << "sty/aozora4reader.sty"
   end
   Jeweler::GemcutterTasks.new

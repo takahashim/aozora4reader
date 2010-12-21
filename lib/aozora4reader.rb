@@ -24,6 +24,7 @@ class Aozora4Reader
     @log_text = []
     @line_num=0
     @gaiji = {}
+    @gaiji2 = {}
   end
 
   # UTF-8で出力
@@ -125,6 +126,17 @@ END_OF_POST
 
   # 外字の処理用
   def translate_gaiji(l)
+    if l =~/※［＃([^］]*)、([^、］]*)］/
+      if @gaiji2[$1]
+        l.gsub!(/※［＃([^］]*)、([^、］]*)］/){@gaiji2[$1]}
+      end
+    end
+    ## ※［＃「姉」の正字、「女＋※［＃第3水準1-85-57］のつくり」、256-下-16］
+    if l =~/※［＃([^］]*※［＃[^］]*］[^］]*)、([^、］]*)］/
+      if @gaiji2[$1]
+        l.gsub!(/※［＃([^］]*※［＃[^］]*］[^］]*)、([^、］]*)］/){@gaiji2[$1]}
+      end
+    end
     if l =~ /※［＃[^］]*?※［＃[^］]*?[12]\-\d{1,2}\-\d{1,2}[^］]*?］[^］]*?］/
       l.gsub!(/※［＃([^］]*?)※［＃([^］]*?([12]\-\d{1,2}\-\d{1,2})[^］]*?)］([^］]*?)］/){"※\\footnote{#$1"+@gaiji[$3]+"#$4}"}
     end
@@ -137,6 +149,7 @@ END_OF_POST
     if l =~ /※［＃[^］]+?］/
       l.gsub!(/※［＃([^］]+?)］/, '※\\footnote{\1}')
     end
+
     if l =~ /※/
       STDERR.puts("Remaining Unprocessed Gaiji Character in Line #@line_num.")
       @log_text << normalize("未処理の外字が#{@line_num}行目にあります．\n")
@@ -291,6 +304,16 @@ END_OF_POST
         @gaiji[key] = data
       end
     end
+
+    File.open(datadir+"/gaiji2.txt") do |f|
+      while gaiji_line = f.gets
+        gaiji_line.chomp!
+        key, data = gaiji_line.split
+        data.gsub(/#.*$/,'')
+        @gaiji2[key] = data
+      end
+    end
+
   end
 
   # 
@@ -516,6 +539,9 @@ END_OF_POST
         outputfile.print "\\begin{jisage}{"+to_single_byte($1)+"}\n"
         line = line.sub(/［＃天から.*?字下げ］/, "")+"\n\\end{jisage}"
       end
+
+      line.gsub!(/［＃図形　□（四角）に内接する◆］/, '{\setlength{\fboxsep}{0pt}\fbox{◆}}')
+
 
       if line =~ /［＃[^］]+?］/
         line.gsub!(/［＃([^］]+?)］/, '\\endnote{\1}')

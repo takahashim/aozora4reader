@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["takahashim"]
-  s.date = %q{2010-12-20}
+  s.date = %q{2010-12-22}
   s.default_executable = %q{a4r}
   s.description = %q{Aozora Bunko converter for Sony Reader}
   s.email = %q{maki@rubycolor.org}
@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
      "aozora4reader.gemspec",
      "bin/a4r",
      "data/gaiji.txt",
+     "data/gaiji2.txt",
      "lib/aozora4reader.rb",
      "sty/aozora.sty",
      "sty/aozora4reader.sty",
