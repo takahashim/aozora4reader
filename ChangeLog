@@ -1,3 +1,7 @@
+Wed Dec 22 03:23:38 2010  Masayoshi Takahashi  <takahashimm@gmail.com>
+
+	* lib/aozora4reader.rb: add gaiji2 (not JIS gaiji but UTF character)
+
 Mon Dec 20 14:52:53 2010  Masayoshi Takahashi  <takahashimm@gmail.com>
 
 	* git/aozora4reader/lib/aozora4reader.rb: support accent
