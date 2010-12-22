@@ -502,6 +502,15 @@ END_OF_POST
         line.sub!(/［＃ここから.*?([１２３４５６７８９０一二三四五六七八九〇十]*)字下げ.*?］/){"\\begin{jisage}{"+to_single_byte($1)+"}"}
         @jisage = true
       end
+      if line =~ /^［＃ここから地付き］$/
+        @jisage = true
+        line = "\\begin{flushright}"
+      end
+      if line =~ /^［＃ここで地付き終わり］$/
+        line = "\\end{flushright}"
+        @jisage = false
+      end
+
       if line =~ /［＃.*?地付き.*?］$/
         line = "\\begin{flushright}\n"+line.sub(/［＃.*?地付き.*?］$/, "\\end{flushright}")
         @line_num += 1
