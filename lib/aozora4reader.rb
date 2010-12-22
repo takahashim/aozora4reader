@@ -113,11 +113,11 @@ END_OF_POST
     l.gsub!(/([AIOEUaioeu])_/){"\\={#$1}"}
     l.gsub!(/([!?])@/){"#$1'"}
     l.gsub!(/([Aa])&/){"\\r{#$1}"}
-    l.gsub!(/AE&/){"\\AE"}
-    l.gsub!(/ae&/){"\\ae"}
-    l.gsub!(/OE&/){"\\OE"}
-    l.gsub!(/oe&/){"\\oe"}
-    l.gsub!(/s&/){"\\ss"}
+    l.gsub!(/AE&/){"\\AE{}"}
+    l.gsub!(/ae&/){"\\ae{}"}
+    l.gsub!(/OE&/){"\\OE{}"}
+    l.gsub!(/oe&/){"\\oe{}"}
+    l.gsub!(/s&/){"\\ss{}"}
     l.gsub!(/([cC]),/){"\\c{#$1}"}
     l.gsub!(/〔/,'')
     l.gsub!(/〕/,'')
@@ -212,8 +212,8 @@ END_OF_POST
     end
 
     # ６ 半角英数字
-    if l =~ /[A-Za-z0-9#\-\;\&.\'\^\` ]+?《.+?》/
-      l.gsub!(/([A-Za-z0-9#\-\;\&. ]+?)《(.+?)》/, '\\ruby{\1}{\2}')
+    if l =~ /[A-Za-z0-9#\-\;\&.\'\^\`\\\{\} ]+?《.+?》/
+      l.gsub!(/([A-Za-z0-9#\-\;\&.\'\^\`\\\{\} ]+?)《(.+?)》/, '\\ruby{\1}{\2}')
     end
     if l =~ /《.*?》/
       STDERR.puts("Unknown ruby pattern found in #@line_num.")

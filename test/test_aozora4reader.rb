@@ -73,7 +73,7 @@ class TestAozora4reader < Test::Unit::TestCase
     
     should "support complex2" do
       l = "［＃５字下げ］［＃小見出し］※［＃ローマ数字1、1-13-21］［＃小見出し終わり］"
-      l2 = "［＃５字下げ］［＃小見出し］\\UTF{2160}［＃小見出し終わり］"
+      l2 = "［＃５字下げ］［＃小見出し］\\rensuji{I}［＃小見出し終わり］"
       assert_equal l2, @a4r.translate_gaiji(l)
     end
 
@@ -106,6 +106,11 @@ class TestAozora4reader < Test::Unit::TestCase
     should "support 握〆《にぎりしめ》" do
       l = "凍つた手を握〆《にぎりしめ》ながら"
       l2 = "凍つた手を\\ruby{握〆}{にぎりしめ}ながら"
+      assert_equal l2, @a4r.translate_ruby(l)
+    end
+    should "support 〔oe&ille`res〕《オヨイエエル》 " do
+      l = "\\oeill\`{e}res《オヨイエエル》 "
+      l2 = "\\ruby{\\oeill\`{e}res}{オヨイエエル} "
       assert_equal l2, @a4r.translate_ruby(l)
     end
 
