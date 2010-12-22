@@ -606,7 +606,10 @@ END_OF_POST
           "$"+$1+"_{"+to_single_byte($2)+"}$"
         }
       end
-      line.tr!("┌┐┘└│─","┐┘└┌─│")
+      if line =~ /([^　]*)［＃ゴシック体］$/
+        line.gsub!(/([^　]*)［＃ゴシック体］/){"{\\gtfamily #{$1}}"}
+      end
+      line.tr!("┌┐┘└│─┃━","┐┘└┌─│━┃")
       if line =~ /［＃改段］/
         line.sub!(/［＃改段］/, "\\clearpage")
       end
