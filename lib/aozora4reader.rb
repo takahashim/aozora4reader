@@ -611,6 +611,16 @@ END_OF_POST
       if line =~ /([^　]*)［＃ゴシック体］$/
         line.gsub!(/([^　]*)［＃ゴシック体］/){"{\\gtfamily #{$1}}"}
       end
+
+      if line =~ /［＃ここから横組み］(.*?)［＃ここで横組み終わり］/
+        line.gsub!(/［＃ここから横組み］(.*?)［＃ここで横組み終わり］/){
+          yoko_str = $1
+          yoko_str.gsub!(/π/,"\\pi ")
+          yoko_str.gsub!(/＝/,"=")
+          yoko_str.gsub!(/(\d+)［＃「\1」は指数］/){"^{#{$1}}"}
+          "$"+yoko_str+"$"
+        }
+      end
       line.tr!("┌┐┘└│─┃━","┐┘└┌─│━┃")
       if line =~ /［＃改段］/
         line.sub!(/［＃改段］/, "\\clearpage")
