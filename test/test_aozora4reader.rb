@@ -73,10 +73,28 @@ class TestAozora4reader < Test::Unit::TestCase
   end
 
   context "bouten" do
+    should "support また、びいどろ［＃「びいどろ」に傍点］という" do
+      l = "また、びいどろ［＃「びいどろ」に傍点］という"
+      l2 = "また、\\bou{びいどろ}という"
+      assert_equal l2, @a4r.translate_bouten(l)
+    end
     should "support ［＃傍点］香一※［＃「火＋（麈−鹿）」、第3水準1-87-40］［＃傍点終わり］" do
       l = "［＃傍点］香一\\UTF{70b7}［＃傍点終わり］"
       l2 = '\\bou{香一{\\UTF{70b7}}}'
       assert_equal l2, @a4r.translate_bouten(l)
+    end
+  end
+
+  context "ruby" do
+    should "support 清浄な蒲団《ふとん》" do
+      l = "清浄な蒲団《ふとん》"
+      l2 = "清浄な\\ruby{蒲団}{ふとん}"
+      assert_equal l2, @a4r.translate_ruby(l)
+    end
+    should "support 始終｜圧《おさ》えつけていた" do
+      l = "始終｜圧《おさ》えつけていた"
+      l2 = "始終\\ruby{圧}{おさ}えつけていた"
+      assert_equal l2, @a4r.translate_ruby(l)
     end
   end
 end
