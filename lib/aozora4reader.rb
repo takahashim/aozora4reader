@@ -553,7 +553,28 @@ END_OF_POST
         bunbo = $3
         line.gsub!(/(.+)［＃「.+?」は分数］/, "\\rensuji{#{bunshi}/#{bunbo}}")
       end
-
+      if line =~ /［＃「.+?」は罫囲み］/
+        line.gsub!(/(.+)［＃「\1」は罫囲み］/, '\\fbox{\1}')
+      end
+      if line =~ /［＃「(.+?)」は(本文より)?([１２３４５６])段階大きな文字］/
+        line.gsub!(/([^［]+?)［＃「\1」は(本文より)?([１２３４５６])段階大きな文字］/) {
+          num = to_single_byte($3).to_i
+          case num
+          when 1
+            "{\\large #{$1}}"
+          when 2
+            "{\\Large #{$1}}"
+          when 3
+            "{\\LARGE #{$1}}"
+          when 4
+            "{\\huge #{$1}}"
+          when 5
+            "{\\Huge #{$1}}"
+          when 6
+            "{\\Huge #{$1}}"
+          end
+        }
+      end
 
       if line =~ /［＃「.+?」は斜体］/
         line.gsub!(/(.+)［＃「\1」は斜体］/){
