@@ -96,5 +96,12 @@ class TestAozora4reader < Test::Unit::TestCase
       l2 = "始終\\ruby{圧}{おさ}えつけていた"
       assert_equal l2, @a4r.translate_ruby(l)
     end
+    should "support 握〆《にぎりしめ》" do
+      l = "凍つた手を握〆《にぎりしめ》ながら"
+      l2 = "凍つた手を\\ruby{握〆}{にぎりしめ}ながら"
+      assert_equal l2, @a4r.translate_ruby(l)
+    end
+
+
   end
 end

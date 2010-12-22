@@ -11,7 +11,7 @@ require 'nkf'
 class Aozora4Reader
 
   PreambleLineNumber=13
-  KANJIPAT = "[々〇〻\u3400-\u9FFF\uF900-\uFAFF※ヶ]"
+  KANJIPAT = "[々〇〻\u3400-\u9FFF\uF900-\uFAFF※ヶ〆]"
   MAX_SAGE = 20
 
   def self.a4r(file)
