@@ -64,8 +64,13 @@ class TestAozora4reader < Test::Unit::TestCase
       l2 = 'とくは\\UTF{59ca}や兄が順序に呼ばれたので、こんどは自分が呼ばれたのだと氣が附いた。そして只目を\\UTF{775c}つて役人の顏を仰ぎ見た。'
       assert_equal l2, @a4r.translate_gaiji(l)
     end
+  end
 
-
-
+  context "bouten" do
+    should "support ［＃傍点］香一※［＃「火＋（麈−鹿）」、第3水準1-87-40］［＃傍点終わり］" do
+      l = "［＃傍点］香一\\UTF{70b7}［＃傍点終わり］"
+      l2 = '\\bou{香一{\\UTF{70b7}}}'
+      assert_equal l2, @a4r.translate_bouten(l)
+    end
   end
 end

@@ -240,6 +240,13 @@ END_OF_POST
     if l =~ /［＃「.+?」に蛇の目傍点］/
       l.gsub!(/(.+?)［＃.*?「\1」に蛇の目傍点］/, '\\jyanomebou{\1}')
     end
+    if l =~ /［＃傍点］.+?［＃傍点終わり］/
+      l.gsub!(/［＃傍点］(.+?)［＃傍点終わり］/){
+        str = $1
+        str.gsub!(/(\\UTF{.+?})/){ "{"+$1+"}"}
+        "\\bou{"+str+"}"
+      }
+    end
     return l
   end
 
@@ -448,6 +455,9 @@ END_OF_POST
       if line =~ /［＃(.+?)傍点］/
         translate_bouten(line)
       end
+      if line =~ /［＃傍点］.+?［＃傍点終わり］/
+        translate_bouten(line)
+      end
       if line =~ /《.*?》/
         translate_ruby(line)
       end
@@ -459,6 +469,16 @@ END_OF_POST
         line = line.sub(/［＃この行.*?字下げ］/, "")+"\n\\end{jisage}"
         @line_num += 2
       end
+
+      if line =~ /［＃ここから地から.+字上げ］/
+        line.sub!(/［＃ここから地から([１２３４５６７８９０一二三四五六七八九〇十]*)字上げ］/){"\\begin{flushright}\\advance\\rightskip"+to_single_byte($1)+"zw"}
+        @jisage = true
+      end
+      if line =~ /［＃ここで字上げ終わり］/
+        line.sub!(/［＃ここで字上げ終わり］/){"\\end{flushright}"}
+        @jisage = false
+      end
+
       if line =~ /［＃.*?字下げ.*?(?:終わり|まで).*?］/ 
         line = line.sub(/［＃.*?字下げ.*?(?:終わり|まで).*?］/, "")+"\\end{jisage}"
         @jisage = false
@@ -519,10 +539,22 @@ END_OF_POST
       if line =~ /［＃「.+?」は縦中横］/
         line.gsub!(/(.+)［＃「\1」は縦中横］/, '\\rensuji{\1}')
       end
+      if line =~ /［＃「(１)(／)(\d+)」は分数］/
+        bunshi = to_single_byte($1)
+        bunbo = $3
+        line.gsub!(/(.+)［＃「.+?」は分数］/, "\\rensuji{#{bunshi}/#{bunbo}}")
+      end
+
+
       if line =~ /［＃「.+?」は斜体］/
         line.gsub!(/(.+)［＃「\1」は斜体］/){
           shatai = to_single_byte($1).tr("ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ","abcdefghijklmnopqrstuvwxyz")
           "\\rensuji{\\textsl{"+shatai+"}}"
+        }
+      end
+      if line =~ /［＃「[０-９0-9]」は下付き小文字］/
+        line.gsub!(/([A-Za-zａ-ｚＡ-Ｚαβδγ])([０-９0-9])［＃「\2」は下付き小文字］/){
+          "$"+$1+"_{"+to_single_byte($2)+"}$"
         }
       end
       line.tr!("┌┐┘└│─","┐┘└┌─│")
@@ -541,7 +573,6 @@ END_OF_POST
       end
 
       line.gsub!(/［＃図形　□（四角）に内接する◆］/, '{\setlength{\fboxsep}{0pt}\fbox{◆}}')
-
 
       if line =~ /［＃[^］]+?］/
         line.gsub!(/［＃([^］]+?)］/, '\\endnote{\1}')
