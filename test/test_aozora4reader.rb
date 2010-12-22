@@ -57,6 +57,12 @@ class TestAozora4reader < Test::Unit::TestCase
       l2 = '於\\UTF{976C}王'
       assert_equal l2, @a4r.translate_gaiji(l)
     end
+
+    should "support ［＃「さんずい＋闊」］" do
+      l = "「※［＃「さんずい＋闊」］歩」"
+      l2 = '「\\UTF{24103}歩」'
+      assert_equal l2, @a4r.translate_gaiji(l)
+    end
 =end
 
     should "support complex" do
