@@ -70,6 +70,13 @@ class TestAozora4reader < Test::Unit::TestCase
       l2 = 'とくは\\UTF{59ca}や兄が順序に呼ばれたので、こんどは自分が呼ばれたのだと氣が附いた。そして只目を\\UTF{775c}つて役人の顏を仰ぎ見た。'
       assert_equal l2, @a4r.translate_gaiji(l)
     end
+    
+    should "support complex2" do
+      l = "［＃５字下げ］［＃小見出し］※［＃ローマ数字1、1-13-21］［＃小見出し終わり］"
+      l2 = "［＃５字下げ］［＃小見出し］\\UTF{2160}［＃小見出し終わり］"
+      assert_equal l2, @a4r.translate_gaiji(l)
+    end
+
   end
 
   context "bouten" do
