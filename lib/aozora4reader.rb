@@ -488,7 +488,7 @@ END_OF_POST
         @jisage = false
       end
 
-      if line =~ /［＃.*?字下げ.*?(?:終わり|まで).*?］/ 
+      if line =~ /［＃.*?字下げ[^］]*?(?:終わり|まで)[^］]*?］/ 
         line = line.sub(/［＃.*?字下げ.*?(?:終わり|まで).*?］/, "")+"\\end{jisage}"
         @jisage = false
       end
@@ -510,8 +510,8 @@ END_OF_POST
       if line =~ /［＃.*?(?:行末|地)(?:から|より).*?([１２３４５６７８９０一二三四五六七八九〇十]*)字上.*?］$$/
         line = "\\begin{flushright}\\advance\\rightskip"+to_single_byte($1)+"zw\n"+line.sub(/［＃.*?(?:行末|地)(?:から|より).*?字上.*?］$/, "\\end{flushright}")
         @line_num += 1
-      elsif line =~ /［＃.*?(?:行末|地)(?:から|より).*?([１２３４５６７８９０一二三四五六七八九〇十]*)字上.*?］/
-        line = "\\begin{flushright}\\advance\\rightskip"+to_single_byte($1)+"zw\n"+line.sub(/［＃.*?(?:行末|地)(?:から|より)(.*?)字上.*?］/,"")+"\\end{flushright}"
+      elsif line =~ /^(.*?)［＃.*?(?:行末|地)(?:から|より).*?([１２３４５６７８９０一二三四五六七八九〇十]*)字上.*?］(.*)$/
+        line = $1+"\\begin{flushright}\\advance\\rightskip"+to_single_byte($2)+"zw\n"+$3+"\\end{flushright}"
         @line_num += 1
       end
       if line =~ /［＃「.+?」は返り点］/
@@ -542,6 +542,25 @@ END_OF_POST
       if line =~ /［＃「(.*?)」は中見出し］/
         line.gsub!(/(.*?)［＃「(.*?)」は中見出し］/){"{\\large #{$1}}"}
       end
+      if line =~ /［＃「(.*?)」は小見出し］/
+        line.gsub!(/(.*?)［＃「(.*?)」は小見出し］/){"{\\gtfamily #{$1}}"}
+      end
+      if line =~ /［＃小見出し］(.*?)［＃小見出し終わり］/
+        line.gsub!(/［＃小見出し］(.*?)［＃小見出し終わり］/){"{\\gtfamily #{$1}}"}
+      end
+
+      if line =~ /［＃ここから中見出し］/
+        line.gsub!(/［＃ここから中見出し］/){"{\\large"}
+      end
+      if line =~ /［＃ここで中見出し終わり］/
+        line.gsub!(/［＃ここで中見出し終わり］/){"}"}
+      end
+
+      if line =~ /［＃ページの左右中央］/
+        ## XXX とりあえず無視
+        line.gsub!(/［＃ページの左右中央］/, "")
+      end
+
       if line =~ /［＃「(.*?)」は太字］/
         line.gsub!(/(.+)［＃「\1」は太字］/,'{\\textbf{\1}}')
       end
