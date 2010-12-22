@@ -12,6 +12,7 @@ class Aozora4Reader
 
   PreambleLineNumber=13
   KANJIPAT = "[々〇〻\u3400-\u9FFF\uF900-\uFAFF※ヶ]"
+  MAX_SAGE = 20
 
   def self.a4r(file)
     self.new(file).main
@@ -568,7 +569,11 @@ END_OF_POST
         line.gsub!(/([aioeu])\'/i){ "\\\'{#{$1}}"}
       end
       if line =~ /［＃天から.*?([１２３４５６７８９０一二三四五六七八九〇十]*)字下げ］/
-        outputfile.print "\\begin{jisage}{"+to_single_byte($1)+"}\n"
+        num = to_single_byte($1).to_i
+        if num > MAX_SAGE
+          num = MAX_SAGE
+        end
+        outputfile.print "\\begin{jisage}{#{num}}\n"
         line = line.sub(/［＃天から.*?字下げ］/, "")+"\n\\end{jisage}"
       end
 
