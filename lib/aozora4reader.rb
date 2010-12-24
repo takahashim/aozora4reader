@@ -630,7 +630,7 @@ END_OF_POST
           "$"+yoko_str+"$"
         }
       end
-      line.tr!("┌┐┘└│─┃━","┐┘└┌─│━┃")
+      line.tr!("┌┐┘└│─┃━→","┐┘└┌─│━┃↓")
       if line =~ /［＃改段］/
         line.sub!(/［＃改段］/, "\\clearpage")
       end
