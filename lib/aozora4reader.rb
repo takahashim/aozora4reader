@@ -58,10 +58,16 @@ class Aozora4Reader
 
     return s
   end
-  
+
+  # ルビの削除(表題等)
+  def remove_ruby(str)
+    str.gsub(/\\ruby{([^}]+)}{[^}]*}/i){$1}
+  end
 
   # プリアンブルの出力
   def preamble
+    title = remove_ruby(@title)
+    author = remove_ruby(@author)
     str = <<"END_OF_PRE"
 \\documentclass[a5paper]{tbook}
 %\\documentclass[a5paper, twocolumn]{tbook}
@@ -75,8 +81,8 @@ class Aozora4Reader
 %\\def\\rubykatuji{\\tiny}%for UTF package
 %\\renewenvironment{teihon}{\\comment}{\\endcomment}
 \\usepackage[dvipdfm,bookmarks=false,bookmarksnumbered=false,hyperfootnotes=false,%
-            pdftitle={#{@title}},%
-            pdfauthor={#{@author}}]{hyperref}
+            pdftitle={#{title}},%
+            pdfauthor={#{author}}]{hyperref}
 %% Bookmarkの文字化け対策（日本語向け）
 \\ifnum 46273=\\euc"B4C1 % 46273 == 0xB4C1 == 漢(EUC-JP)
   \\AtBeginDvi{\\special{pdf:tounicode EUC-UCS2}}%
@@ -494,12 +500,12 @@ END_OF_POST
         line = line.sub(/［＃.*?字下げ.*?(?:終わり|まで).*?］/, "")+"\\end{jisage}"
         @jisage = false
       end
-      if line =~ /［＃ここから.+字下げ.*?］/
+      if line =~ /［＃(ここから|これより|ここより).+字下げ.*?］/
         if @jisage
           outputfile.print "\\end{jisage}\n"
           @line_num += 1
         end
-        line.sub!(/［＃ここから.*?([１２３４５６７８９０一二三四五六七八九〇十]*)字下げ.*?］/){"\\begin{jisage}{"+to_single_byte($1)+"}"}
+        line.sub!(/［＃(ここから|これより|ここより).*?([１２３４５６７８９０一二三四五六七八九〇十]*)字下げ.*?］/){"\\begin{jisage}{"+to_single_byte($2)+"}"}
         @jisage = true
       end
       if line =~ /^［＃ここから地付き］$/

@@ -113,7 +113,20 @@ class TestAozora4reader < Test::Unit::TestCase
       l2 = "\\ruby{\\oeill\`{e}res}{オヨイエエル} "
       assert_equal l2, @a4r.translate_ruby(l)
     end
+  end
 
+  context "remove_ruby" do
+    should "support \\ruby{不如帰}{ほととぎす}　小説" do
+      l = "\\ruby{不如帰}{ほととぎす}　小説"
+      l2 = "不如帰　小説"
+      assert_equal l2, @a4r.remove_ruby(l)
+    end
+
+    should "support \\RUBY{}{}" do
+      l = "\\RUBY{不如帰}{ほととぎす}　小説"
+      l2 = "不如帰　小説"
+      assert_equal l2, @a4r.remove_ruby(l)
+    end
 
   end
 end
