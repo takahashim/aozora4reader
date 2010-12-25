@@ -534,8 +534,8 @@ END_OF_POST
       if line =~ /［＃「.+?」は返り点］/
         line.gsub!(/(.+)［＃「\1」は返り点］/, '\\kaeriten{\ajKunten{\1}}')
       end
-      if line =~ /［＃[一二上中下甲乙丙丁レ]*］/
-        line.gsub!(/［＃([一二上中下甲乙丙丁レ]*)］/, '\\kaeriten{\ajKunten{\1}}')
+      if line =~ /［＃[一二三上中下甲乙丙丁レ]*］/
+        line.gsub!(/［＃([一二三上中下甲乙丙丁レ]*)］/, '\\kaeriten{\ajKunten{\1}}')
       end
       if line =~ /［＃（.*?）］/
         line.gsub!(/［＃（(.*?)）］/, '\\okurigana{\1}')
