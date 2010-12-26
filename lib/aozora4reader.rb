@@ -364,6 +364,7 @@ END_OF_POST
       if in_note
         if line =~ /^-+$/
           in_note = false
+          break
         end
       else
         if line =~ /^-+$/
