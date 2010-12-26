@@ -504,12 +504,12 @@ END_OF_POST
         line = line.sub(/［＃.*?字下げ.*?(?:終わり|まで).*?］/, "")+"\\end{jisage}"
         @jisage = false
       end
-      if line =~ /［＃(ここから|これより|ここより).+字下げ.*?］/
+      if line =~ /［＃(ここから|これより|ここより|以下).+字下げ.*?］/
         if @jisage
           outputfile.print "\\end{jisage}\n"
           @line_num += 1
         end
-        line.sub!(/［＃(ここから|これより|ここより).*?([１２３４５６７８９０一二三四五六七八九〇十]*)字下げ.*?］/){"\\begin{jisage}{"+to_single_byte($2)+"}"}
+        line.sub!(/［＃(ここから|これより|ここより|以下).*?([１２３４５６７８９０一二三四五六七八九〇十]*)字下げ.*?］/){"\\begin{jisage}{"+to_single_byte($2)+"}"}
         @jisage = true
       end
       if line =~ /^［＃ここから地付き］$/
