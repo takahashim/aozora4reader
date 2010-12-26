@@ -90,6 +90,12 @@ class TestAozora4reader < Test::Unit::TestCase
       l2 = '\\bou{香一{\\UTF{70b7}}}'
       assert_equal l2, @a4r.translate_bouten(l)
     end
+
+    should "support 白丸傍点" do
+      l = "菫謹勤［＃「菫謹勤」に白丸傍点］"
+      l2 = "\\siromarubou{菫謹勤}"
+      assert_equal l2, @a4r.translate_bouten(l)
+    end
   end
 
   context "ruby" do
