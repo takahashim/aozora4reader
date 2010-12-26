@@ -236,30 +236,22 @@ END_OF_POST
 
   # 傍点の処理用
   def translate_bouten(l)
-    if l =~ /［＃「.+?」に傍点］/
-      l.gsub!(/(.+?)［＃.*?「\1」に傍点］/, '\\bou{\1}')
-    end
-    if l =~ /［＃「.+?」に白ゴマ傍点］/
-      l.gsub!(/(.+?)［＃.*?「\1」に白ゴマ傍点］/, '\\sirogomabou{\1}')
-    end
-    if l =~ /［＃「.+?」に丸傍点］/
-      l.gsub!(/(.+?)［＃.*?「\1」に丸傍点］/, '\\marubou{\1}')
-    end
-    if l =~ /［＃「.+?」に白丸傍点］/
-      l.gsub!(/(.+?)［＃.*?「\1」に白丸傍点］/, '\\siromarubou{\1}')
-    end
-    if l =~ /［＃「.+?」に黒三角傍点］/
-      l.gsub!(/(.+?)［＃.*?「\1」に黒三角傍点］/, '\\kurosankakubou{\1}')
-    end
-    if l =~ /［＃「.+?」に白三角傍点］/
-      l.gsub!(/(.+?)［＃.*?「\1」に白三角傍点］/, '\\sirosankakubou{\1}')
-    end
-    if l =~ /［＃「.+?」に二重丸傍点］/
-      l.gsub!(/(.+?)［＃.*?「\1」に二重丸傍点］/, '\\nijyuumarubou{\1}')
-    end
-    if l =~ /［＃「.+?」に蛇の目傍点］/
-      l.gsub!(/(.+?)［＃.*?「\1」に蛇の目傍点］/, '\\jyanomebou{\1}')
-    end
+    bouten_list = [
+                   ["傍点", "bou"],
+                   ["白ゴマ傍点","sirogomabou"],
+                   ["丸傍点","marubou"],
+                   ["白丸傍点","siromarubou"],
+                   ["黒三角傍点","kurosankakubou"],
+                   ["白三角傍点","sirosankakubou"],
+                   ["二重丸傍点","nijyuumarubou"],
+                   ["蛇の目傍点","jyanomebou"]]
+
+    bouten_list.each{ |name, fun|
+      if l =~ /［＃「.+?」に#{name}］/
+        l.gsub!(/(.+?)［＃.*?「\1」に#{name}］/, "\\#{fun}{\\1}")
+      end
+    }
+
     if l =~ /［＃傍点］.+?［＃傍点終わり］/
       l.gsub!(/［＃傍点］(.+?)［＃傍点終わり］/){
         str = $1
