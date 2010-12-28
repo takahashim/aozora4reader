@@ -248,7 +248,12 @@ END_OF_POST
 
     bouten_list.each{ |name, fun|
       if l =~ /［＃「.+?」に#{name}］/
-        l.gsub!(/(.+?)［＃.*?「\1」に#{name}］/, "\\#{fun}{\\1}")
+        l.gsub!(/(.+?)［＃.*?「\1」に#{name}］/){
+          str = $1
+          str.gsub!(/(\\UTF{.+?})/){ "{"+$1+"}"}
+          str.gsub!(/(\\ruby{.+?}{.+?})/i){ "{"+$1+"}"}
+          "\\#{fun}{"+str+"}"
+        }
       end
     }
 
@@ -256,6 +261,7 @@ END_OF_POST
       l.gsub!(/［＃傍点］(.+?)［＃傍点終わり］/){
         str = $1
         str.gsub!(/(\\UTF{.+?})/){ "{"+$1+"}"}
+        str.gsub!(/(\\ruby{.+?}{.+?})/i){ "{"+$1+"}"}
         "\\bou{"+str+"}"
       }
     end
