@@ -392,7 +392,7 @@ END_OF_POST
       @subauthor = normalize(meta_data.shift)
       @meta_data = []
       until meta_data.empty?
-        @metadata << normalize(meta_data.shift)
+        @meta_data << normalize(meta_data.shift)
       end
     end
 
