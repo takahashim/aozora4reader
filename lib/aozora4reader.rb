@@ -471,14 +471,14 @@ END_OF_POST
       if line =~ /※/
         translate_gaiji(line)
       end
+      if line =~ /《.*?》/
+        translate_ruby(line)
+      end
       if line =~ /［＃(.+?)傍点］/
         translate_bouten(line)
       end
       if line =~ /［＃傍点］.+?［＃傍点終わり］/
         translate_bouten(line)
-      end
-      if line =~ /《.*?》/
-        translate_ruby(line)
       end
       if line =~ /［＃「(.+?)」に(?:二重)?[傍鎖破波]線］/
         translate_bousen(line)
