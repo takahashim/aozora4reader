@@ -1,5 +1,5 @@
 \NeedsTeXFormat{pLaTeX2e}
-\ProvidesPackage{aozora4reader}[2009/02/05 v0.5 takayama, 2010/12/18 v0.1 takahashim]
+\ProvidesPackage{aozora4reader}[2009/02/05 v0.5 takayama, 2010/12/28 v0.2 takahashim]
 \RequirePackage{verbatim}
 \RequirePackage{keyval}
 %
@@ -8,10 +8,10 @@
 \newif\if@waku \@wakutrue
 \def\aozora@title@style{plain}
 \def\aozora@dviware{dvipdfm}
-\def\kindle@type{kindle2}
+\def\device@type{sonyreader}
 \def\base@size{normal}
 \define@key{aozora}{title}[plain]{\def\aozora@title@style{#1}}
-\define@key{aozora}{device}[kindle2]{\def\kindle@type{#1}}
+\define@key{aozora}{device}[sonyreader]{\def\device@type{#1}}
 \define@key{aozora}{size}[normal]{\def\base@size{#1}}
 \define@key{aozora}{dviware}[dvipdfm]{\def\aozora@dviware{#1}}
 \define@key{aozora}{final}[true]{\let\footnote\@gobble}
@@ -44,8 +44,8 @@
 %
 %用紙サイズおよび文字サイズの設定
 %
-\def\device@a{kindle2}
-\def\device@b{kindledx}
+\def\device@a{sonyreader}
+\def\device@b{xxxxxxxx}
 \def\size@a{normal}
 \def\size@b{small}
 \def\size@c{large}
@@ -100,7 +100,7 @@
 			\scrs =10\JQ%\scriptsizeの級数
 			\scrbs=14H  %\scriptsizeの行送り
 		\else
-			\PackageError{aozorakindle}{Unkown letter size.}{Choose 'normal' or 'small' or 'large'.}
+			\PackageError{aozora4reader}{Unkown letter size.}{Choose 'normal' or 'small' or 'large'.}
 		\fi
 	\fi
 \fi
@@ -112,10 +112,10 @@
 \hugebs=\smlbs
 \multiply\hugebs by 3 %\Hugeの行送り
 %用紙サイズの決定
-\ifx\kindle@type\device@a
-	%Kindle 2用の設定
+\ifx\device@type\device@a
+	%SonyReader用の設定
 	%%\setlength\paperwidth{340H}
-        \setlength\paperwidth{350H}
+	\setlength\paperwidth{350H}
 	%%\setlength\paperheight{453H}
 	\setlength\paperheight{466H}
 	\ifx\base@size\size@a
@@ -131,13 +131,13 @@
 %%				\jisuu=27 \gyousuu=13
 				\jisuu=28 \gyousuu=13
 			\else
-				\PackageError{aozorakindle}{Unkown letter size.}{Choose 'normal' or 'small' or 'large'.}
+				\PackageError{aozora4reader}{Unkown letter size.}{Choose 'normal' or 'small' or 'large'.}
 			\fi
 		\fi
 	\fi
 \else
-	\ifx\kindle@type\device@b
-		%Kindle DX用の設定
+	\ifx\device@type\device@b
+		%xxxxxxxx用の設定
 		\setlength\paperwidth{530H}
 		\setlength\paperheight{771H}
 		\@twocolumntrue
@@ -153,12 +153,12 @@
 					%大きい場合の場合
 					\jisuu=48 \gyousuu=20
 				\else
-					\PackageError{aozorakindle}{Unkown letter size.}{Choose 'normal' or 'small' or 'large'.}
+					\PackageError{aozora4reader}{Unkown letter size.}{Choose 'normal' or 'small' or 'large'.}
 				\fi
 			\fi
 		\fi
 	\else
-		\PackageError{aozorakindle}{Unkown device.}{Choose 'kindle2' or 'kindledx'.}
+		\PackageError{aozora4reader}{Unkown device.}{Choose 'sonyreader' or 'xxxxxxxx'.}
 	\fi
 \fi
 %
@@ -331,7 +331,7 @@
 \def\Ruby#1#2{\kana[2]{#1}{#2}}
 \def\RUBY#1#2{\kana[3]{#1}{#2}}
 \let\KANA=\KANAtop
-\def\——{—\kern-.5zw—\kern-.5zw—}
+\def\――{―\kern-.5zw―\kern-.5zw―}
 \newenvironment{jisage}[1]{\advance\leftskip#1zw}{}
 \def\sirogomabou#1{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny\ajWhiteSesame}}\bou{#1}\egroup}
 \def\marubou#1{\bgroup\renewcommand{\boutenchar}{\hbox to 1zh{\tate\hfil\tiny●}}\bou{#1}\egroup}
@@ -382,6 +382,17 @@
 \def\bousen#1{#1}
 \AtBeginDvi{\special{pdf: pagesize height \the\paperheight\space width \the\paperwidth}}
 \AtBeginDvi{\special{pdf:docview <</ViewerPreferences <</Direction /R2L>> >>}}
+\def\thefootnote{\@arabic\c@footnote}
+%
+%脚注の定義
+%
+\def\@footnotemark{%
+	\leavevmode
+	\ifhmode\edef\@x@sf{\the\spacefactor}\nobreak\fi
+	\@makefnmark
+	\ifhmode\spacefactor\@x@sf\fi
+	\relax}
+\def\@makefnmark{\raise0.25zh\hbox to 0.5zw{\hss\normalfont\tiny\rensuji{\@thefnmark}\hss}}
 %
 %後註の定義
 %
@@ -390,7 +401,7 @@
 \def\thenotecount{\@arabic\c@notecount}
 \def\endnote#1{%
 	\stepcounter{notecount}%
-	\raisebox{0.75zh}{\tiny\kanji\c@notecount}%
+	\raisebox{0.25zh}{\tiny\kanji\c@notecount}%
 	\expandafter\gdef\csname note@\number\c@notecount\endcsname{#1}%
 }
 \def\endnotehead{後註}
