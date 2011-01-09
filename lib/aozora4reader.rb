@@ -394,12 +394,12 @@ END_OF_POST
       @subauthor = normalize(meta_data.shift)
     else
       @subtitle = normalize(meta_data.shift)
-      @author = normalize(meta_data.shift)
-      @subauthor = normalize(meta_data.shift)
       @meta_data = []
       until meta_data.empty?
         @meta_data << normalize(meta_data.shift)
       end
+      @subauthor = @meta_data.pop
+      @author = @meta_data.pop
     end
 
     outputfile.write(preamble())
