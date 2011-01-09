@@ -498,6 +498,15 @@ END_OF_POST
         @jisage = false
       end
 
+      if line =~ /［＃ここから改行天付き、折り返して.*?字下げ］/
+        if @jisage
+          outputfile.print "\\end{jisage}\n"
+          @line_num += 1
+        end
+        line.sub!(/［＃ここから改行天付き、折り返して([１２３４５６７８９０一二三四五六七八九〇十]*)字下げ］/){"\\begin{jisage}{#{to_single_byte($1)}}\\setlength\\parindent{-"+to_single_byte($1)+"zw}"}
+        @jisage = true
+      end
+
       if line =~ /［＃.*?字下げ[^］]*?(?:終わり|まで)[^］]*?］/ 
         line = line.sub(/［＃.*?字下げ.*?(?:終わり|まで).*?］/, "")+"\\end{jisage}"
         @jisage = false
