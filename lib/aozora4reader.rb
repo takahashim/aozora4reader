@@ -166,6 +166,10 @@ END_OF_POST
       l.gsub!(/※［＃感嘆符三つ.*?］/){ "\\rensuji{!!!}"}
     end
 
+    if l =~ /※［＃.*?([A-Za-z0-9_]+\.png).*?］/
+      l.gsub!(/※［＃([^］]+?)］/, "\\includegraphics{#{$1}}")
+    end
+
     if l =~ /※［＃[^］]+?］/
       l.gsub!(/※［＃([^］]+?)］/, '※\\footnote{\1}')
     end
