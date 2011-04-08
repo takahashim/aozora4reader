@@ -353,8 +353,8 @@ END_OF_POST
 
     # 入出力ファイルの定義
     outputfile_name = @inputfile_name.sub(/\.txt$/, ".tex")
-    inputfile = File.open(@inputfile_name)
-    outputfile = File.open(outputfile_name, "w")
+    inputfile = File.open(@inputfile_name, "r:SJIS")
+    outputfile = File.open(outputfile_name, "w:UTF-8")
 
     # プリアンブルの処理
     empty_line = 0
