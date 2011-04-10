@@ -1,3 +1,7 @@
+Mon Apr 11 00:24:42 2011  Masayoshi Takahashi  <takahashimm@gmail.com>
+
+	* lib/aozora4reader.rb: to fix mojibake, specify encoding at File#open (patch from liyuray)
+
 Thu Jan 27 13:43:10 2011  Masayoshi Takahashi  <takahashimm@gmail.com>
 
 	* lib/aozora4reader.rb  fix ruby regexp (support '_' as non-separator)

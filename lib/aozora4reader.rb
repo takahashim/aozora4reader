@@ -326,7 +326,7 @@ END_OF_POST
   # 外字用ハッシュを作成
   def load_gaiji
     datadir = File.dirname(__FILE__)+"/../data"
-    File.open(datadir+"/gaiji.txt") do |f|
+    File.open(datadir+"/gaiji.txt", "r:UTF-8") do |f|
       while gaiji_line = f.gets
         gaiji_line.chomp!
         key, data = gaiji_line.split
@@ -334,7 +334,7 @@ END_OF_POST
       end
     end
 
-    File.open(datadir+"/gaiji2.txt") do |f|
+    File.open(datadir+"/gaiji2.txt", "r:UTF-8") do |f|
       while gaiji_line = f.gets
         gaiji_line.chomp!
         key, data = gaiji_line.split
@@ -353,8 +353,8 @@ END_OF_POST
 
     # 入出力ファイルの定義
     outputfile_name = @inputfile_name.sub(/\.txt$/, ".tex")
-    inputfile = File.open(@inputfile_name)
-    outputfile = File.open(outputfile_name, "w")
+    inputfile = File.open(@inputfile_name, "r:SJIS")
+    outputfile = File.open(outputfile_name, "w:UTF-8")
 
     # プリアンブルの処理
     empty_line = 0
