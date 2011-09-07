@@ -74,21 +74,23 @@ class Aozora4Reader
 %\\usepackage[deluxe]{otf}
 \\usepackage[expert, deluxe]{otf}
 %\\usepackage{utf}
+% Bookmarkの文字化け対策（日本語向け）
+\\ifnum 46273=\\euc"B4C1 % 46273 == 0xB4C1 == 漢(EUC-JP)
+  \\usepackage{atbegshi}%
+  \\AtBeginShipoutFirst{\\special{pdf:tounicode EUC-UCS2}}%
+\\else
+  \\usepackage{atbegshi}%
+  \\AtBeginShipoutFirst{\\special{pdf:tounicode 90ms-RKSJ-UCS2}}%
+\\fi
+\\usepackage[dvipdfm,bookmarks=false,bookmarksnumbered=false,hyperfootnotes=false,%
+            pdftitle={#{title}},%
+            pdfauthor={#{author}}]{hyperref}
 \\usepackage{furikana}
 \\usepackage{type1cm}
 \\usepackage[size=large]{aozora4reader}
 \\def\\rubykatuji{\\rubyfamily\\tiny}
 %\\def\\rubykatuji{\\tiny}%for UTF package
 %\\renewenvironment{teihon}{\\comment}{\\endcomment}
-\\usepackage[dvipdfm,bookmarks=false,bookmarksnumbered=false,hyperfootnotes=false,%
-            pdftitle={#{title}},%
-            pdfauthor={#{author}}]{hyperref}
-%% Bookmarkの文字化け対策（日本語向け）
-\\ifnum 46273=\\euc"B4C1 % 46273 == 0xB4C1 == 漢(EUC-JP)
-  \\AtBeginDvi{\\special{pdf:tounicode EUC-UCS2}}%
-\\else
-  \\AtBeginDvi{\\special{pdf:tounicode 90ms-RKSJ-UCS2}}%
-\\fi
 
 END_OF_PRE
 
