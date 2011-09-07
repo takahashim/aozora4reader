@@ -1,3 +1,7 @@
+Wed Sep  7 16:31:55 2011  Masayoshi Takahashi  <takahashimm@gmail.com>
+
+	* lib/aozora4reader.rb : support TeXLive 2011 (fix style in header)
+
 Mon Apr 11 00:24:42 2011  Masayoshi Takahashi  <takahashimm@gmail.com>
 
 	* lib/aozora4reader.rb: to fix mojibake, specify encoding at File#open (patch from liyuray)
