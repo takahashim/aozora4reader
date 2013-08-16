@@ -32,6 +32,8 @@ class Aozora4Reader
   # UTF-8で出力
   def normalize(l)
     ##l.gsub!(/&/, '\\\\&')
+    l.gsub!(/#/,'\\#')
+    l.gsub!(/_/,'\\textunderscore{}')
     l.to_s
   end
   
