@@ -7,6 +7,7 @@
 # see: http://a2k.aill.org/
 
 require 'nkf'
+require "aozora4reader/version"
 
 class Aozora4Reader
 
