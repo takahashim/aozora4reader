@@ -27,6 +27,7 @@ class Aozora4Reader
     @line_num=0
     @gaiji = {}
     @gaiji2 = {}
+    @sayuuchuuou = false
   end
 
   # UTF-8で出力
@@ -467,9 +468,17 @@ END_OF_POST
         line = line.sub(/(.+?)［＃(「\1」は横?[１|一]文字[^］]*?)］/){"\\ajLig{"+to_single_byte($1)+"}"}
       end
       if line =~ /［＃改丁.*?］/
+        if @sayuuchuuou
+          line = "\\vspace*{\\stretch{1}}" + line
+          @sayuuchuuou = false
+        end
         line.sub!(/［＃改丁.*?］/, "\\cleardoublepage")
       end
       if line =~ /［＃改[頁|ページ].*?］/
+        if @sayuuchuuou
+          line = "\\vspace*{\\stretch{1}}" + line
+          @sayuuchuuou = false
+        end
         line.sub!(/［＃改[頁|ページ].*?］/, "\\clearpage")
       end
 
@@ -611,8 +620,8 @@ END_OF_POST
       end
 
       if line =~ /［＃ページの左右中央］/
-        ## XXX とりあえず無視
-        line.gsub!(/［＃ページの左右中央］/, "")
+        line.gsub!(/［＃ページの左右中央］/, "\\vspace*{\\stretch{1}}")
+        @sayuuchuuou = true
       end
 
       ## XXX 字詰めは1行の文字数が少ないので無視
